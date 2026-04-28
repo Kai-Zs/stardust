@@ -1,19 +1,21 @@
 <template>
   <div class="playlist">
-    <h3 class="playlist-title">{{ name }}</h3>
+    <h3>{{ name }}</h3>
     <p class="playlist-desc" v-if="description">{{ description }}</p>
     <ul class="song-list">
       <li
-        v-for="song in songs"
+        v-for="(song, index) in songs"
         :key="song.id"
         class="song-item"
-        :class="{ active: current?.id === song.id }"
-        @click="$emit('select', song)"
+        :class="{ active: currentIndex === index }"
+        @click="$emit('select', index)"
       >
+        <span class="index">{{ index + 1 }}</span>
         <span class="song-name">{{ song.name }}</span>
-        <span class="song-artist">{{ song.artist }}</span>
+        <span class="artist">{{ song.artist }}</span>
       </li>
     </ul>
+    <p v-if="songs.length === 0" class="empty">暂无歌曲</p>
   </div>
 </template>
 
@@ -22,27 +24,23 @@ defineProps<{
   name: string
   description?: string
   songs: { id: number; name: string; artist: string }[]
-  current?: { id: number; name: string; artist: string }
+  currentIndex: number
 }>()
 
 defineEmits<{
-  select: [song: { id: number; name: string; artist: string }]
+  select: [index: number]
 }>()
 </script>
 
 <style scoped>
-.playlist-title { font-size: 1.15rem; margin-bottom: 0.3rem; }
+.playlist h3 { font-size: 1.1rem; margin-bottom: 0.3rem; }
 .playlist-desc { color: var(--color-text-secondary); font-size: 0.85rem; margin-bottom: 1rem; }
 .song-list { list-style: none; padding: 0; }
-.song-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0.6rem 0.75rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: background 0.2s;
-}
+.song-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; cursor: pointer; border-radius: var(--radius); transition: background 0.15s; }
 .song-item:hover { background: var(--color-surface); }
-.song-item.active { background: var(--color-surface); color: var(--color-accent); }
-.song-name { font-weight: 500; }
-.song-artist { color: var(--color-text-secondary); font-size: 0.85rem; }
+.song-item.active { background: var(--color-accent-light); color: var(--color-text); }
+.index { font-size: 0.85rem; color: var(--color-text-secondary); min-width: 1.5rem; }
+.song-name { flex: 1; font-weight: 500; }
+.artist { font-size: 0.85rem; color: var(--color-text-secondary); }
+.empty { text-align: center; color: var(--color-text-secondary); padding: 2rem; }
 </style>

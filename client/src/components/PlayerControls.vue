@@ -1,38 +1,60 @@
 <template>
   <div class="player-controls">
-    <div class="player-info">
-      <span class="current-song" v-if="current">{{ current.name }} - {{ current.artist }}</span>
-      <span class="current-song" v-else>未选择歌曲</span>
+    <div class="now-playing" v-if="current">
+      <div class="cover-placeholder">🎵</div>
+      <div class="song-info">
+        <div class="song-name">{{ current.name }}</div>
+        <div class="artist">{{ current.artist }}</div>
+      </div>
     </div>
+    <div class="empty" v-else>未在播放</div>
+
     <div class="controls">
-      <button class="ctrl-btn" title="上一首">&laquo;</button>
+      <button @click="$emit('prev')" title="上一首" class="ctrl-btn">⏮</button>
       <button class="ctrl-btn ctrl-play" @click="$emit('toggle')">
         {{ playing ? '⏸' : '▶' }}
       </button>
-      <button class="ctrl-btn" title="下一首">&raquo;</button>
+      <button @click="$emit('next')" title="下一首" class="ctrl-btn">⏭</button>
     </div>
-    <input
-      type="range"
-      class="progress-bar"
-      :value="progress"
-      min="0"
-      max="100"
-      @input="$emit('seek', ($event.target as HTMLInputElement).value)"
-    />
+
+    <div class="progress-bar" @click="handleProgressClick">
+      <div class="progress-fill" :style="{ width: progress + '%' }"></div>
+    </div>
+    <div class="time-info">
+      <span>{{ formatTime(currentTime) }}</span>
+      <span>{{ formatTime(duration) }}</span>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  current?: { id: number; name: string; artist: string }
-  playing?: boolean
-  progress?: number
+const props = defineProps<{
+  current: { id: number; name: string; artist: string } | null
+  playing: boolean
+  progress: number
+  currentTime: number
+  duration: number
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   toggle: []
-  seek: [value: string]
+  prev: []
+  next: []
+  seek: [percent: number]
 }>()
+
+function formatTime(seconds: number): string {
+  const m = Math.floor(seconds / 60)
+  const s = Math.floor(seconds % 60)
+  return `${m}:${s.toString().padStart(2, '0')}`
+}
+
+function handleProgressClick(e: MouseEvent) {
+  const bar = e.currentTarget as HTMLElement
+  const rect = bar.getBoundingClientRect()
+  const percent = ((e.clientX - rect.left) / rect.width) * 100
+  emit('seek', Math.round(percent))
+}
 </script>
 
 <style scoped>
@@ -40,22 +62,21 @@ defineEmits<{
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 1.25rem;
+  padding: 1.5rem;
+  text-align: center;
 }
-.player-info { text-align: center; margin-bottom: 0.75rem; }
-.current-song { font-size: 1rem; color: var(--color-text); }
-.controls { display: flex; justify-content: center; gap: 1rem; margin-bottom: 0.75rem; }
-.ctrl-btn {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 0.4rem 0.9rem;
-  cursor: pointer;
-  font-size: 1.1rem;
-  color: var(--color-text);
-  font-family: var(--font-sans);
-}
+.now-playing { display: flex; align-items: center; gap: 1rem; justify-content: center; margin-bottom: 1rem; }
+.cover-placeholder { font-size: 2.5rem; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: var(--color-bg); border-radius: var(--radius); }
+.song-info { text-align: left; }
+.song-name { font-weight: 600; font-size: 1.1rem; }
+.artist { color: var(--color-text-secondary); font-size: 0.9rem; }
+.empty { color: var(--color-text-secondary); padding: 1.5rem; }
+.controls { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1rem; }
+.ctrl-btn { background: none; border: 1px solid var(--color-border); border-radius: 50%; width: 44px; height: 44px; cursor: pointer; font-size: 1.2rem; color: var(--color-text); display: flex; align-items: center; justify-content: center; }
 .ctrl-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
-.ctrl-play { font-size: 1.3rem; padding: 0.3rem 0.8rem; }
-.progress-bar { width: 100%; accent-color: var(--color-accent); }
+.ctrl-play { background: var(--color-accent) !important; color: #fff !important; border: none !important; width: 52px; height: 52px; font-size: 1.4rem; }
+.ctrl-play:hover { background: var(--color-accent-light) !important; color: var(--color-text) !important; }
+.progress-bar { height: 6px; background: var(--color-border); border-radius: 3px; margin-bottom: 0.3rem; cursor: pointer; }
+.progress-fill { height: 100%; background: var(--color-accent); border-radius: 3px; transition: width 0.3s; }
+.time-info { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--color-text-secondary); }
 </style>
