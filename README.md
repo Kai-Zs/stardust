@@ -1,4 +1,4 @@
-# Kai's Blog & Personal Site
+# 星霜记 / Stardust
 
 基于 Vue3 + Hono + SQLite 的综合个人网站。
 
