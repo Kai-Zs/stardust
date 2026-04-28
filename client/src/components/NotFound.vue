@@ -1,7 +1,1 @@
-<template>
-  <div class="container" style="text-align:center;padding:4rem 0;">
-    <h1>404</h1>
-    <p>页面未找到</p>
-    <router-link to="/">返回首页</router-link>
-  </div>
-</template>
+<template><div class="container" style="text-align:center;padding:5rem 0;"><h2>404</h2><p style="color:var(--color-text-secondary);margin:1rem 0;">页面不存在</p><router-link to="/">返回首页</router-link></div></template>
