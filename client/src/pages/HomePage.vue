@@ -14,11 +14,22 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { useHead } from '@unhead/vue'
 import { useSiteStore } from '../stores/site'
 import { useThemeStore } from '../stores/theme'
 import { useBlogStore } from '../stores/blog'
 import PostCard from '../components/PostCard.vue'
 import { mockSiteConfig } from '../mock/data'
+
+useHead({
+  title: '首页 — 星霜记',
+  meta: [
+    { name: 'description', content: '星霜记 — 岁月流转，记录时光' },
+    { property: 'og:title', content: '首页 — 星霜记' },
+    { property: 'og:description', content: '星霜记 — 岁月流转，记录时光' },
+    { property: 'og:type', content: 'website' },
+  ],
+})
 
 const siteStore = useSiteStore()
 const blogStore = useBlogStore()

@@ -32,7 +32,18 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
+import { useHead } from '@unhead/vue'
 import ProjectCard from '../components/ProjectCard.vue'
+
+useHead({
+  title: '项目 — 星霜记',
+  meta: [
+    { name: 'description', content: '代码是另一种诗歌' },
+    { property: 'og:title', content: '项目 — 星霜记' },
+    { property: 'og:description', content: '代码是另一种诗歌' },
+    { property: 'og:type', content: 'website' },
+  ],
+})
 import EmptyState from '../components/EmptyState.vue'
 import { useBlogStore } from '../stores/blog'
 import type { Project } from '../stores/blog'

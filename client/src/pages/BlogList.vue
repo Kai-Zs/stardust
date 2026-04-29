@@ -25,8 +25,19 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useHead } from '@unhead/vue'
 import { useBlogStore } from '../stores/blog'
 import PostCard from '../components/PostCard.vue'
+
+useHead({
+  title: '博客 — 星霜记',
+  meta: [
+    { name: 'description', content: '用文字记录每一段值得留恋的时光' },
+    { property: 'og:title', content: '博客 — 星霜记' },
+    { property: 'og:description', content: '用文字记录每一段值得留恋的时光' },
+    { property: 'og:type', content: 'website' },
+  ],
+})
 import TagCloud from '../components/TagCloud.vue'
 import Pagination from '../components/Pagination.vue'
 import EmptyState from '../components/EmptyState.vue'

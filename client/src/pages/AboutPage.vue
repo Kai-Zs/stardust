@@ -10,7 +10,18 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
+import { useHead } from '@unhead/vue'
 import { useSiteStore } from '../stores/site'
+
+useHead({
+  title: '关于 — 星霜记',
+  meta: [
+    { name: 'description', content: '关于这个博客和它背后的人' },
+    { property: 'og:title', content: '关于 — 星霜记' },
+    { property: 'og:description', content: '关于这个博客和它背后的人' },
+    { property: 'og:type', content: 'website' },
+  ],
+})
 import MarkdownRenderer from '../components/MarkdownRenderer.vue'
 import { mockSiteConfig } from '../mock/data'
 

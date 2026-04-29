@@ -11,7 +11,18 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { useHead } from '@unhead/vue'
 import TimelineEntry from '../components/TimelineEntry.vue'
+
+useHead({
+  title: '时间线 — 星霜记',
+  meta: [
+    { name: 'description', content: '回首来路，每一步都是风景' },
+    { property: 'og:title', content: '时间线 — 星霜记' },
+    { property: 'og:description', content: '回首来路，每一步都是风景' },
+    { property: 'og:type', content: 'website' },
+  ],
+})
 import EmptyState from '../components/EmptyState.vue'
 import { useBlogStore } from '../stores/blog'
 

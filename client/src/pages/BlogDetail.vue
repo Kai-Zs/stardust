@@ -55,6 +55,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useHead } from '@unhead/vue'
 import { useBlogStore } from '../stores/blog'
 import { useToastStore } from '../stores/toast'
 import MarkdownRenderer from '../components/MarkdownRenderer.vue'
@@ -69,6 +70,16 @@ const toast = useToastStore()
 const slug = String(route.params.slug ?? '')
 
 const post = ref<Post | null>(null)
+
+useHead({
+  title: computed(() => post.value ? `${post.value.title} — 星霜记` : '文章 — 星霜记'),
+  meta: [
+    { name: 'description', content: computed(() => post.value?.excerpt || '') },
+    { property: 'og:title', content: computed(() => post.value ? `${post.value.title} — 星霜记` : '文章 — 星霜记') },
+    { property: 'og:description', content: computed(() => post.value?.excerpt || '') },
+    { property: 'og:type', content: 'article' },
+  ],
+})
 
 onMounted(async () => {
   post.value = (await blogStore.getPost(slug)) ?? null

@@ -22,7 +22,18 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { useHead } from '@unhead/vue'
 import EmptyState from '../components/EmptyState.vue'
+
+useHead({
+  title: '友链 — 星霜记',
+  meta: [
+    { name: 'description', content: '在茫茫网海中与有趣的灵魂相遇' },
+    { property: 'og:title', content: '友链 — 星霜记' },
+    { property: 'og:description', content: '在茫茫网海中与有趣的灵魂相遇' },
+    { property: 'og:type', content: 'website' },
+  ],
+})
 import { useBlogStore } from '../stores/blog'
 
 const blogStore = useBlogStore()

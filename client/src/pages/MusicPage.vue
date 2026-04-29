@@ -37,7 +37,18 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { useHead } from '@unhead/vue'
 import PlayerControls from '../components/PlayerControls.vue'
+
+useHead({
+  title: '音乐 — 星霜记',
+  meta: [
+    { name: 'description', content: '愿每一段旋律都能温柔你的时光' },
+    { property: 'og:title', content: '音乐 — 星霜记' },
+    { property: 'og:description', content: '愿每一段旋律都能温柔你的时光' },
+    { property: 'og:type', content: 'website' },
+  ],
+})
 import Playlist from '../components/Playlist.vue'
 import { useBlogStore } from '../stores/blog'
 import type { PlaylistSong } from '../stores/blog'
