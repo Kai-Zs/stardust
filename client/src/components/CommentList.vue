@@ -28,14 +28,7 @@
 </template>
 
 <script setup lang="ts">
-interface Comment {
-  id: string
-  nickname: string
-  content: string
-  createdAt: string
-  ipLocation?: string
-  replies?: Comment[]
-}
+import type { Comment } from '../types'
 
 defineProps<{ comments: Comment[] }>()
 

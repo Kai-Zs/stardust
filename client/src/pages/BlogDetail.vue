@@ -55,26 +55,14 @@ import CommentForm from '../components/CommentForm.vue'
 import NotFound from '../components/NotFound.vue'
 import { mockPosts, mockComments } from '../mock/data'
 import type { MockComment } from '../mock/data'
+import type { Comment } from '../types'
 
 const route = useRoute()
-const slug = route.params.slug as string
+const slug = String(route.params.slug ?? '')
 
 const post = computed(() => mockPosts.find(p => p.slug === slug) || null)
 
-function buildCommentTree(comments: MockComment[]): {
-  id: string
-  nickname: string
-  content: string
-  createdAt: string
-  ipLocation?: string
-  replies: {
-    id: string
-    nickname: string
-    content: string
-    createdAt: string
-    ipLocation?: string
-  }[]
-}[] {
+function buildCommentTree(comments: MockComment[]): Comment[] {
   const topLevel = comments.filter(c => c.parent_id === null)
   return topLevel.map(c => ({
     id: String(c.id),

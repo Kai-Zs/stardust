@@ -40,12 +40,7 @@ import { ref, computed, onBeforeUnmount } from 'vue'
 import PlayerControls from '../components/PlayerControls.vue'
 import Playlist from '../components/Playlist.vue'
 import { mockPlaylist } from '../mock/data'
-
-interface Song {
-  id: number
-  name: string
-  artist: string
-}
+import type { Song } from '../types'
 
 const playlist = ref(mockPlaylist)
 const currentIndex = ref(-1)

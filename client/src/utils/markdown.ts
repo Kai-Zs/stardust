@@ -110,4 +110,3 @@ export function renderMarkdown(content: string): string {
   })
 }
 
-export { md }
