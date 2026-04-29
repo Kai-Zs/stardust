@@ -21,34 +21,40 @@ md = new MarkdownIt({
   },
 })
 
-// 用占位符保护公式，避免 markdown-it 处理公式中的 _ * 等字符
+// 用占位符保护行内公式，块级公式在 markdown-it 之后处理
 const originalRender = md.render.bind(md)
 md.render = (src: string, env?: unknown): string => {
-  const placeholders: string[] = []
+  const inlinePlaceholders: string[] = []
   let processed = src
-  // 块级公式 $$...$$
+  // 先移除块级公式，用空行占位，稍后处理
+  const blockFormulas: string[] = []
   processed = processed.replace(/\$\$([\s\S]*?)\$\$/g, (_: string, formula: string) => {
-    try {
-      const html = katex.renderToString(formula.trim(), { displayMode: true, throwOnError: false })
-      const idx = placeholders.length
-      placeholders.push(html)
-      return `%%MATH_BLOCK_${idx}%%`
-    } catch { return `<pre class="katex-error">公式渲染失败: ${formula}</pre>` }
+    blockFormulas.push(formula.trim())
+    return `\n\n%%MATH_BLOCK_${blockFormulas.length - 1}%%\n\n`
   })
-  // 行内公式 $...$
-  processed = processed.replace(/\$([^$]+?)\$/g, (_: string, formula: string) => {
+  // 行内公式用占位符保护，避免 markdown-it 处理 _ * 等
+  processed = processed.replace(/\$([^$\n]+?)\$/g, (_: string, formula: string) => {
     try {
       const html = katex.renderToString(formula.trim(), { displayMode: false, throwOnError: false })
-      const idx = placeholders.length
-      placeholders.push(html)
+      const idx = inlinePlaceholders.length
+      inlinePlaceholders.push(html)
       return `%%MATH_INLINE_${idx}%%`
     } catch { return `$${formula}$` }
   })
   let result = originalRender(processed, env)
-  // 还原公式占位符
-  placeholders.forEach((html, idx) => {
-    result = result.replace(`%%MATH_BLOCK_${idx}%%`, html)
+  // 还原行内公式占位符
+  inlinePlaceholders.forEach((html, idx) => {
     result = result.replace(`%%MATH_INLINE_${idx}%%`, html)
+  })
+  // 块级公式在 markdown-it 之后渲染，确保不被包裹在 <p> 中
+  blockFormulas.forEach((formula, idx) => {
+    try {
+      const html = katex.renderToString(formula, { displayMode: true, throwOnError: false })
+      result = result.replace(`<p>%%MATH_BLOCK_${idx}%%</p>`, html)
+      result = result.replace(`%%MATH_BLOCK_${idx}%%`, html)
+    } catch {
+      result = result.replace(`%%MATH_BLOCK_${idx}%%`, `<pre class="katex-error">公式渲染失败: ${formula}</pre>`)
+    }
   })
   return result
 }
