@@ -127,6 +127,7 @@
   transition: background-color 0.2s ease;
 }
 .admin-table tbody tr:hover {
+  background: var(--color-surface);
   background: color-mix(in srgb, var(--color-accent) 4%, var(--color-surface));
 }
 

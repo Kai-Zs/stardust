@@ -126,7 +126,7 @@ onBeforeUnmount(() => {
 .music-page { padding-bottom: 3rem; }
 .page-header { text-align: center; margin-bottom: 2.5rem; animation: fadeDown 0.5s ease both; }
 @keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
-.page-header h1 { font-family: var(--font-serif); font-size: 2.2rem; margin-bottom: 0.4rem; letter-spacing: 0.06em; }
+.page-header h1 { font-family: var(--font-serif); font-size: 1.8rem; margin-bottom: 0.4rem; }
 .page-subtitle { color: var(--color-text-secondary); font-size: 0.95rem; font-style: italic; letter-spacing: 0.04em; }
 .music-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
 .player-section { position: sticky; top: 5rem; }

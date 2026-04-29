@@ -225,7 +225,7 @@ function publish() {
   font-size: 0.85rem;
   color: var(--color-text-secondary);
   z-index: 50;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 @media (max-width: 768px) {

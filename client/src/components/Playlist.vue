@@ -61,6 +61,7 @@ defineEmits<{
 .song-item:last-child { border-bottom-color: transparent; }
 .song-item:hover { background: var(--color-bg); }
 .song-item.active {
+  background: var(--color-accent-light);
   background: color-mix(in srgb, var(--color-accent) 10%, transparent);
   color: var(--color-accent);
 }

@@ -26,7 +26,7 @@ defineProps<{
 
 <style scoped>
 .project-card { padding: 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-surface); transition: box-shadow var(--transition-normal), transform var(--transition-normal), background-color 0.4s ease, border-color 0.4s ease; cursor: pointer; }
-.project-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.project-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--color-accent-light); }
 .project-name { font-size: 1.15rem; margin-bottom: 0.5rem; }
 .project-desc { color: var(--color-text-secondary); font-size: 0.9rem; line-height: 1.5; margin-bottom: 0.75rem; }
 .tech-stack { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.75rem; }

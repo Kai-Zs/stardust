@@ -42,6 +42,7 @@ const menuOpen = ref(false)
   top: 0;
   z-index: 100;
   padding: 0.85rem 0;
+  background: var(--color-bg);
   background: color-mix(in srgb, var(--color-bg) 85%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -142,6 +143,7 @@ const menuOpen = ref(false)
     right: 0;
     flex-direction: column;
     gap: 0;
+    background: var(--color-bg);
     background: color-mix(in srgb, var(--color-bg) 95%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);

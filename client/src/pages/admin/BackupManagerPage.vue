@@ -1,6 +1,9 @@
 <template>
   <div class="manager-page">
-    <h1>备份恢复</h1>
+    <div class="admin-page-header">
+      <h1>备份恢复</h1>
+      <p class="admin-page-subtitle">创建备份、恢复数据</p>
+    </div>
 
     <!-- 自动备份状态 -->
     <div class="status-card">
@@ -44,7 +47,7 @@
         <span v-if="restoreFile" class="selected-file">{{ restoreFile.name }}</span>
       </div>
       <button
-        class="btn-danger restore-submit"
+        class="admin-btn-danger restore-submit"
         :disabled="!restoreFile"
         @click="confirmRestore"
       >开始恢复</button>
@@ -57,7 +60,7 @@
         <p>此操作将<strong>永久覆盖</strong>当前所有数据，建议先下载一份当前备份。确定要继续吗？</p>
         <div class="admin-modal-actions">
           <button class="admin-btn-secondary" @click="showRestoreModal = false">取消</button>
-          <button class="btn-danger" @click="doRestore">确认恢复</button>
+          <button class="admin-btn-danger" @click="doRestore">确认恢复</button>
         </div>
       </div>
     </div>
@@ -124,18 +127,6 @@ function doRestore() {
 
 .desc { color: var(--color-text-secondary); font-size: 0.9rem; margin-bottom: 1rem; }
 
-.btn-danger {
-  padding: 0.5rem 1.5rem;
-  background: var(--color-danger);
-  color: var(--color-on-accent);
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 0.95rem;
-}
-.btn-danger:hover { opacity: 0.9; }
-.btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
-
 .restore-area { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
 .restore-btn { cursor: pointer; }
 .selected-file { font-size: 0.9rem; color: var(--color-accent); }
@@ -143,7 +134,7 @@ function doRestore() {
 .backup-modal { max-width: 440px; }
 .backup-modal h3 { margin-bottom: 0.5rem; }
 .backup-modal p { color: var(--color-text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.6; }
-.admin-modal-actions .btn-danger { padding: 0.5rem 1.25rem; border-radius: var(--radius); }
+.admin-modal-actions .admin-btn-danger { padding: 0.5rem 1.25rem; border-radius: var(--radius); }
 
 @media (max-width: 480px) {
   .status-grid { grid-template-columns: 1fr; }

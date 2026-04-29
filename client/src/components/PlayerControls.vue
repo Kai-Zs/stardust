@@ -188,12 +188,13 @@ function handleProgressClick(e: MouseEvent) {
 .ctrl-btn:active { transform: scale(0.95); }
 .ctrl-play {
   width: 54px; height: 54px;
+  background: var(--color-accent);
   background: color-mix(in srgb, var(--color-accent) 75%, var(--color-surface));
   color: var(--color-on-accent); border: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
 }
-.ctrl-play:hover { background: var(--color-accent); transform: scale(1.08); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); }
+.ctrl-play:hover { background: var(--color-accent); transform: scale(1.08); box-shadow: var(--shadow-md); }
 .ctrl-play:active { transform: scale(0.95); }
 
 /* 进度条 */

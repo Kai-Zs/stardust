@@ -117,7 +117,7 @@ const recentComments = ref([
 .stat-card:nth-child(3) { animation-delay: 0.12s; }
 .stat-card:nth-child(4) { animation-delay: 0.18s; }
 .stat-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
 }
 .stat-icon { font-size: 1.4rem; margin-bottom: 0.4rem; }

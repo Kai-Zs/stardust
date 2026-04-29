@@ -115,6 +115,12 @@ function doDelete(id: number) {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   overflow: hidden;
+  transition: all 0.25s ease;
+}
+.attachment-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--color-accent-light);
 }
 .card-preview {
   height: 130px;

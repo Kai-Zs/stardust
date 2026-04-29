@@ -84,7 +84,7 @@ const posts = ref(mockPosts)
 .recent-posts {
   max-width: 720px;
   margin: 0 auto;
-  animation: fadeIn 0.6s ease both;
+  animation: fadeIn 0.5s ease both;
   animation-delay: 0.3s;
 }
 @keyframes fadeIn {

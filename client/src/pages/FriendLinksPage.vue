@@ -72,6 +72,7 @@ const links = ref(mockFriendLinks)
 .link-card:nth-child(6) { animation-delay: 0.35s; }
 .link-avatar {
   width: 36px; height: 36px; border-radius: 50%;
+  background: var(--color-accent-light);
   background: color-mix(in srgb, var(--color-accent) 12%, transparent);
   color: var(--color-accent);
   display: flex; align-items: center; justify-content: center;

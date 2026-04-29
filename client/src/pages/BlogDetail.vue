@@ -135,7 +135,7 @@ function handleCommentSubmit(data: { nickname: string; content: string }) {
 /* 文章正文 */
 .article-body {
   margin-bottom: 2.5rem;
-  animation: fadeIn 0.6s ease both;
+  animation: fadeIn 0.5s ease both;
   animation-delay: 0.25s;
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

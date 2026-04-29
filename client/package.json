@@ -18,6 +18,12 @@
     "vue": "^3.5.32",
     "vue-router": "^5.0.6"
   },
+  "browserslist": [
+    "Chrome >= 87",
+    "Firefox >= 78",
+    "Safari >= 14",
+    "Edge >= 88"
+  ],
   "devDependencies": {
     "@types/dompurify": "^3.0.5",
     "@types/markdown-it": "^14.1.2",
