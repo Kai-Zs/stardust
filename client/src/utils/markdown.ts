@@ -63,7 +63,7 @@ export function renderMarkdown(content: string): string {
   const raw = md.render(content)
   return DOMPurify.sanitize(raw, {
     ALLOWED_TAGS: ['h1','h2','h3','h4','h5','h6','p','br','a','ul','ol','li','blockquote','pre','code','em','strong','del','ins','table','thead','tbody','tr','th','td','img','span','div','button','input','label','sup','sub','details','summary','hr','section'],
-    ALLOWED_ATTR: ['href','src','alt','title','class','id','target','rel','loading','width','height','onclick'],
+    ALLOWED_ATTR: ['href','src','alt','title','class','id','target','rel','loading','width','height','onclick','style'],
   })
 }
 
