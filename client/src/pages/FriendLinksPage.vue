@@ -16,7 +16,11 @@
         <span class="link-desc">{{ link.description }}</span>
       </a>
     </div>
-    <EmptyState v-if="!blogStore.friendLinks.length">暂无友链</EmptyState>
+    <div v-if="blogStore.loading" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>加载中…</p>
+    </div>
+    <EmptyState v-else-if="!blogStore.friendLinks.length">暂无友链</EmptyState>
   </div>
 </template>
 

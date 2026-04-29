@@ -26,7 +26,11 @@
       </div>
     </section>
 
-    <EmptyState v-if="!blogStore.projects.length">暂无项目</EmptyState>
+    <div v-if="blogStore.loading" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>加载中…</p>
+    </div>
+    <EmptyState v-else-if="!blogStore.projects.length">暂无项目</EmptyState>
   </div>
 </template>
 

@@ -6,8 +6,14 @@
     </section>
     <section class="recent-posts">
       <h2>最近文章</h2>
-      <PostCard v-for="post in blogStore.posts.slice(0, 5)" :key="post.slug" :post="post" />
-      <router-link to="/blog" class="more">查看全部 &rarr;</router-link>
+      <div v-if="blogStore.loading" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>加载中…</p>
+      </div>
+      <template v-else>
+        <PostCard v-for="post in blogStore.posts.slice(0, 5)" :key="post.slug" :post="post" />
+        <router-link to="/blog" class="more">查看全部 &rarr;</router-link>
+      </template>
     </section>
   </div>
 </template>

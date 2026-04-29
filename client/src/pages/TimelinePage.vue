@@ -5,7 +5,11 @@
     <div class="timeline">
       <TimelineEntry v-for="item in blogStore.timeline" :key="item.id" :entry="item" />
     </div>
-    <EmptyState v-if="!blogStore.timeline.length">暂无记录</EmptyState>
+    <div v-if="blogStore.loading" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>加载中…</p>
+    </div>
+    <EmptyState v-else-if="!blogStore.timeline.length">暂无记录</EmptyState>
   </div>
 </template>
 

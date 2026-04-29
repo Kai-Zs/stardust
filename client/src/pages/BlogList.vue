@@ -10,8 +10,14 @@
     </section>
 
     <section class="post-list">
-      <PostCard v-for="post in paginatedPosts" :key="post.slug" :post="post" />
-      <EmptyState v-if="!filteredPosts.length">暂无匹配的文章</EmptyState>
+      <div v-if="blogStore.loading" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>加载中…</p>
+      </div>
+      <template v-else>
+        <PostCard v-for="post in paginatedPosts" :key="post.slug" :post="post" />
+        <EmptyState v-if="!filteredPosts.length">暂无匹配的文章</EmptyState>
+      </template>
     </section>
 
     <Pagination
