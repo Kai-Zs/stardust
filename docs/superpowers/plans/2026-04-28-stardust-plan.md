@@ -1338,49 +1338,70 @@ MusicPage 子组件、自动保存草稿功能。"
 
 ---
 
-# 第二阶段：后端 API + 数据库 + 文章 CRUD
+# 第二阶段半：后端 API + 数据库 + 文章 CRUD
 
-（后续阶段的详细任务结构将按同样粒度展开，这里先给出概要框架，实施时为每项补充完整的 Step 细节）
+> 原计划第二阶段为后端搭建，实际第二阶段执行了前端基础设施（Store 架构、安全修复、Toast 等）。
+> 后端工作后移至此，作为前后端联调的前置依赖。
 
-## Task 2.1: 后端项目初始化
+## Task 2.5.1: 后端项目初始化
 - 创建 `server/` 目录，初始化 Hono + TypeScript + Drizzle ORM 项目
 - 安装 `hono @hono/node-server drizzle-orm better-sqlite3 bcryptjs jsonwebtoken`
 - 安装开发依赖: `tsx @types/better-sqlite3 @types/bcryptjs @types/jsonwebtoken`
 - 配置 tsconfig、package.json scripts
+- 配置 CORS（允许 localhost:5173 开发环境）
 
-## Task 2.2: 数据库 Schema 与迁移
-- 创建 `server/src/db/schema.ts` — 全部 12 张表的 Drizzle 定义
+## Task 2.5.2: 数据库 Schema 与迁移
+- 创建 `server/src/db/schema.ts` — 全部表的 Drizzle 定义（posts, projects, timeline, friend_links, comments, settings, operation_logs, attachments, users, ip_blocks, playlists）
 - 创建 `server/src/db/index.ts` — Drizzle 初始化 + migrate 函数
 - 运行首次迁移，生成 SQLite 数据库文件
+- 创建 seed 脚本，灌入 mock/data.ts 中的初始数据
 
-## Task 2.3: 中间件
-- `error-handler.ts` — 全局异常捕获
-- `auth.ts` — JWT 验证中间件
-- `rate-limit.ts` — 评论频率限制 (3条/分钟/IP, 内存 Map)
+## Task 2.5.3: 中间件
+- `middleware/error-handler.ts` — 全局异常捕获，统一返回 `{ error: string }`
+- `middleware/auth.ts` — JWT 验证中间件，解析 `Authorization: Bearer <token>`，挂载 `c.set('user', payload)`
+- `middleware/rate-limit.ts` — 评论频率限制（3 条/分钟/IP，内存 Map + TTL 清理）
 
-## Task 2.4: 公开接口
-- `site.ts` — GET /api/site
-- `posts.ts` — GET /api/posts (分页+标签+置顶), GET /api/posts/:slug
-- `tags.ts` — GET /api/tags
-- `projects.ts` — GET /api/projects
-- `timeline.ts` — GET /api/timeline
-- `friend-links.ts` — GET /api/friend-links
-- `music.ts` — GET /api/music/playlist
+## Task 2.5.4: 公开接口（只读）
+- `routes/site.ts` — GET /api/site（返回站点配置键值对）
+- `routes/posts.ts` — GET /api/posts（分页 + 标签筛选 + 置顶排序）、GET /api/posts/:slug
+- `routes/tags.ts` — GET /api/tags（返回所有标签及文章数）
+- `routes/projects.ts` — GET /api/projects
+- `routes/timeline.ts` — GET /api/timeline
+- `routes/friend-links.ts` — GET /api/friend-links
+- `routes/music.ts` — GET /api/music/playlist
+- `routes/comments.ts` — GET /api/comments?slug=xxx（只返回 approved 状态）
 
-## Task 2.5: 文件上传
-- `upload.ts` — POST /api/admin/upload (multer, 10MB 限制)
-- `attachments.ts` — CRUD 附件管理
+## Task 2.5.5: 管理接口（需认证）
+- `routes/admin/auth.ts` — POST /api/admin/login、GET /api/admin/me
+- `routes/admin/posts.ts` — 文章增删改（含 slug 自动生成）
+- `routes/admin/projects.ts` — 项目 CRUD
+- `routes/admin/timeline.ts` — 时间线 CRUD
+- `routes/admin/friend-links.ts` — 友链 CRUD
+- `routes/admin/comments.ts` — 评论审核/隐藏/删除
+- `routes/admin/settings.ts` — 站点设置读写
+- `routes/admin/dashboard.ts` — 仪表盘数据聚合（文章数、评论数、项目数等）
+- `routes/admin/operation-logs.ts` — 操作日志分页查看
 
-## Task 2.6: 前端接入真实 API
-- 修改 `client/src/api/index.ts`，替换 Mock 调用为真实 fetch
-- 移除 mock 依赖，各页面从 API 获取数据
+## Task 2.5.6: 文件上传与附件
+- `routes/admin/upload.ts` — POST /api/admin/upload（10MB 限制，返回 URL）
+- `routes/admin/attachments.ts` — 附件列表 + 删除
+- 静态文件服务：`/uploads/*` 映射到 `uploads/` 目录
 
-## Task 2.7: 第二阶段测试 + 收尾
+## Task 2.5.7: 备份恢复
+- `routes/admin/backup.ts` — GET /api/admin/backup/download（打包 .db + uploads/）
+- `routes/admin/backup.ts` — POST /api/admin/backup/restore（先自动备份当前，解压上传文件，重启）
+
+## Task 2.5.8: 后端测试 + 收尾
+- 启动 server，用 curl/httpie 测试所有接口
+- 确认 CORS、JWT、频率限制均正常
+- 确认 seed 数据可正常查询
+- 提交 + 评审
 
 ---
 
-# 第三阶段：认证 + 后台管理 + 评论系统 + 评审遗留修复
+# 第三阶段：前端接入真实 API + 后台管理 + 评论系统 + 评审遗留修复
 
+> **前置依赖：第二阶段半（后端 API + 数据库）必须先完成。**
 > 本阶段同时处理第二阶段第二轮评审（phase2-review-round2）遗留的 14 个问题。
 > 来源标记：[P3] = 评审 P3 项，[ARCH] = 架构/阶段三阻塞项。
 
