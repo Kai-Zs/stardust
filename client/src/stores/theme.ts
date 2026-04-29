@@ -2,9 +2,8 @@ import { defineStore } from 'pinia'
 import { ref, watchEffect } from 'vue'
 
 export const useThemeStore = defineStore('theme', () => {
-  const theme = ref<'light' | 'dark'>(
-    (localStorage.getItem('theme') as 'light' | 'dark') || 'light',
-  )
+  const stored = localStorage.getItem('theme')
+  const theme = ref<'light' | 'dark'>(stored === 'dark' ? 'dark' : 'light')
 
   function toggle() {
     theme.value = theme.value === 'light' ? 'dark' : 'light'

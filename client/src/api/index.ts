@@ -14,6 +14,9 @@ interface RequestOptions extends RequestInit {
   timeout?: number
 }
 
+// 防止并发 401 响应触发多次重定向
+let isRedirecting = false
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { timeout = 15000, signal: externalSignal, ...fetchOptions } = options
 
@@ -21,11 +24,13 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), timeout)
 
+  let onExternalAbort: (() => void) | undefined
   if (externalSignal) {
     if (externalSignal.aborted) {
       controller.abort()
     } else {
-      externalSignal.addEventListener('abort', () => controller.abort(), { once: true })
+      onExternalAbort = () => controller.abort()
+      externalSignal.addEventListener('abort', onExternalAbort, { once: true })
     }
   }
 
@@ -45,7 +50,8 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     })
 
     if (!res.ok) {
-      if (res.status === 401) {
+      if (res.status === 401 && !isRedirecting) {
+        isRedirecting = true
         localStorage.removeItem('token')
         // 后续可替换为 router.push('/admin/login') 以支持 SPA 导航
         window.location.assign('/admin/login')
@@ -57,6 +63,9 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     return res.json()
   } finally {
     clearTimeout(timer)
+    if (onExternalAbort && externalSignal) {
+      externalSignal.removeEventListener('abort', onExternalAbort)
+    }
   }
 }
 

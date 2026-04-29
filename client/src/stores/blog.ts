@@ -110,6 +110,15 @@ export interface DashboardStats {
 
 const delay = (ms = 300) => new Promise<void>((r) => setTimeout(r, ms))
 
+// ========== loading 计数器（多个 store 共享逻辑） ==========
+function createLoading() {
+  const loading = ref(false)
+  let count = 0
+  const startLoading = () => { count++; loading.value = true }
+  const endLoading = () => { if (--count <= 0) { count = 0; loading.value = false } }
+  return { loading, startLoading, endLoading }
+}
+
 // ========== useBlogStore — 文章和公共数据 ==========
 
 export const useBlogStore = defineStore('blog', () => {
@@ -119,13 +128,11 @@ export const useBlogStore = defineStore('blog', () => {
   const friendLinks = ref<FriendLink[]>([])
   const playlist = ref<Playlist | null>(null)
   const comments = ref<Comment[]>([])
-  const loading = ref(false)
+  // NOTE: error ref 在多个异步请求间共享，后发请求会覆盖先发请求的错误信息。
+  // 彻底修复需要按调用粒度隔离 error（如 per-call 或返回值），当前仅作记录。
   const error = ref<string | null>(null)
 
-  // 计数器方案：解决并发请求时 loading 状态竞争问题
-  let loadingCount = 0
-  function startLoading() { loadingCount++; loading.value = true }
-  function endLoading() { if (--loadingCount <= 0) { loadingCount = 0; loading.value = false } }
+  const { loading, startLoading, endLoading } = createLoading()
 
   async function fetchPosts() {
     startLoading()
@@ -251,13 +258,9 @@ export const useAdminStore = defineStore('admin', () => {
   const operationLogs = ref<OperationLog[]>([])
   const attachments = ref<Attachment[]>([])
   const dashboardStats = ref<DashboardStats | null>(null)
-  const loading = ref(false)
   const error = ref<string | null>(null)
 
-  // 计数器方案：解决并发请求时 loading 状态竞争问题
-  let loadingCount = 0
-  function startLoading() { loadingCount++; loading.value = true }
-  function endLoading() { if (--loadingCount <= 0) { loadingCount = 0; loading.value = false } }
+  const { loading, startLoading, endLoading } = createLoading()
 
   async function fetchAllPosts() {
     startLoading()
