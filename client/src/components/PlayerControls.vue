@@ -5,7 +5,7 @@
       <div class="song-info">
         <div class="song-name">{{ current.name }}</div>
         <div class="artist">{{ current.artist }}</div>
-        <div class="equalizer" v-if="playing">
+        <div class="equalizer" :class="{ active: playing }">
           <span class="bar"></span>
           <span class="bar"></span>
           <span class="bar"></span>
@@ -24,7 +24,7 @@
         <svg v-else viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6 19h4V5H6zm8-14v14h4V5z"/></svg>
       </button>
       <button @click="$emit('next')" title="下一首" class="ctrl-btn">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zm2 0V6l6.5 6L8 18zM16 6v12h2V6z"/></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
       </button>
     </div>
 
@@ -80,12 +80,14 @@ function handleProgressClick(e: MouseEvent) {
 .cover-placeholder { font-size: 2.5rem; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: var(--color-bg); border-radius: 50%; transition: transform 0.3s; }
 .cover-placeholder.spinning { animation: spin 4s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-.equalizer { display: flex; align-items: flex-end; gap: 3px; height: 16px; margin-top: 0.3rem; }
-.equalizer .bar { width: 3px; background: var(--color-accent); border-radius: 1px; animation: eq 0.8s ease-in-out infinite alternate; }
-.equalizer .bar:nth-child(1) { height: 6px; animation-delay: 0s; }
-.equalizer .bar:nth-child(2) { height: 12px; animation-delay: 0.2s; }
-.equalizer .bar:nth-child(3) { height: 8px; animation-delay: 0.4s; }
-.equalizer .bar:nth-child(4) { height: 14px; animation-delay: 0.1s; }
+.equalizer { display: flex; align-items: flex-end; gap: 3px; height: 16px; margin-top: 0.3rem; opacity: 0; transition: opacity var(--transition-fast); }
+.equalizer.active { opacity: 1; }
+.equalizer .bar { width: 3px; height: 4px; background: var(--color-accent); border-radius: 1px; }
+.equalizer.active .bar { animation: eq 0.8s ease-in-out infinite alternate; }
+.equalizer .bar:nth-child(1) { animation-delay: 0s; }
+.equalizer .bar:nth-child(2) { animation-delay: 0.2s; }
+.equalizer .bar:nth-child(3) { animation-delay: 0.4s; }
+.equalizer .bar:nth-child(4) { animation-delay: 0.1s; }
 @keyframes eq { 0% { height: 4px; } 100% { height: 16px; } }
 .song-info { text-align: left; }
 .song-name { font-weight: 600; font-size: 1.1rem; }

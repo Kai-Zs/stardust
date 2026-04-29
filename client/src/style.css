@@ -62,3 +62,12 @@ img { max-width: 100%; height: auto; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* 后台通用样式 */
+.table { transition: box-shadow var(--transition-normal); }
+.table tbody tr { transition: background var(--transition-fast); }
+.table tbody tr:hover { background: var(--color-surface); }
+.modal-overlay { animation: fadeIn 0.2s ease-out; }
+.modal { animation: slideUp 0.25s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
