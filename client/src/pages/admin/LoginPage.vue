@@ -54,6 +54,6 @@ function login() {
 .captcha-row { display: flex; gap: 0.75rem; }
 .captcha-row input { flex: 1; }
 .captcha-img { width: 100px; height: 38px; background: var(--color-border); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: var(--radius); cursor: pointer; user-select: none; }
-.btn-primary { width: 100%; padding: 0.6rem; background: var(--color-accent); color: #fff; border: none; border-radius: var(--radius); font-size: 1rem; cursor: pointer; margin-top: 0.5rem; }
-.btn-primary:hover { opacity: 0.9; }
+.btn-primary { width: 100%; padding: 0.6rem; background: var(--color-accent); color: #fff; border: none; border-radius: var(--radius); font-size: 1rem; cursor: pointer; margin-top: 0.5rem; transition: filter var(--transition-fast); }
+.btn-primary:hover { filter: brightness(0.9); }
 </style>

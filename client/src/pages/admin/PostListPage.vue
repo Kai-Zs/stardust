@@ -120,8 +120,9 @@ function doDelete() {
   border-radius: var(--radius);
   cursor: pointer;
   font-size: 0.95rem;
+  transition: filter var(--transition-fast);
 }
-.btn-primary:hover { opacity: 0.9; }
+.btn-primary:hover { filter: brightness(0.9); }
 
 .filter-bar { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
 .tag-btn {

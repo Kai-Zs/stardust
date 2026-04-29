@@ -1,5 +1,5 @@
 <template>
-  <div class="timeline-entry">
+  <article class="timeline-entry">
     <div class="timeline-dot">
       <span class="timeline-icon">{{ entry.icon || '●' }}</span>
     </div>
@@ -8,7 +8,7 @@
       <h3 class="timeline-title">{{ entry.title }}</h3>
       <p v-if="entry.description" class="timeline-desc">{{ entry.description }}</p>
     </div>
-  </div>
+  </article>
 </template>
 
 <script setup lang="ts">

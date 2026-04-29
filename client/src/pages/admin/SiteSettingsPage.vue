@@ -99,8 +99,9 @@ function save() {
   border-radius: var(--radius);
   cursor: pointer;
   font-size: 0.95rem;
+  transition: filter var(--transition-fast);
 }
-.btn-primary:hover { opacity: 0.9; }
+.btn-primary:hover { filter: brightness(0.9); }
 
 .settings-form {
   background: var(--color-surface);

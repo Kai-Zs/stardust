@@ -13,6 +13,14 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   --max-width: 720px;
   --radius: 8px;
+  --shadow-sm: 0 1px 3px rgba(78, 52, 46, 0.08);
+  --shadow-md: 0 4px 12px rgba(78, 52, 46, 0.1);
+  --shadow-lg: 0 8px 24px rgba(78, 52, 46, 0.12);
+  --transition-fast: 150ms ease-out;
+  --transition-normal: 200ms ease-out;
+  --z-dropdown: 50;
+  --z-modal: 100;
+  --z-toast: 200;
 }
 
 /* 深色模式 */
@@ -42,3 +50,15 @@ h1, h2, h3, h4 { font-family: var(--font-serif); line-height: 1.4; }
 code { font-family: var(--font-mono); font-size: 0.9em; }
 img { max-width: 100%; height: auto; }
 .container { max-width: var(--max-width); margin: 0 auto; padding: 0 1.25rem; }
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

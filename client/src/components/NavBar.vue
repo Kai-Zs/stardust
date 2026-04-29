@@ -24,6 +24,7 @@ import ThemeToggle from './ThemeToggle.vue'
 .nav-inner { display: flex; align-items: center; justify-content: space-between; }
 .logo { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; color: var(--color-text); }
 .nav-links { display: flex; gap: 1.5rem; }
-.nav-links a { font-size: 0.95rem; }
+.nav-links a { font-size: 0.95rem; transition: color var(--transition-fast); }
+.nav-links a:hover { color: var(--color-accent); }
 .nav-links a.router-link-exact-active { color: var(--color-accent); font-weight: 600; }
 </style>

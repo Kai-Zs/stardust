@@ -1,9 +1,9 @@
 <template>
-  <div class="pagination" v-if="totalPages > 1">
+  <nav class="pagination" v-if="totalPages > 1" aria-label="分页">
     <button :disabled="page <= 1" @click="$emit('change', page - 1)">上一页</button>
     <span>{{ page }} / {{ totalPages }}</span>
     <button :disabled="page >= totalPages" @click="$emit('change', page + 1)">下一页</button>
-  </div>
+  </nav>
 </template>
 <script setup lang="ts">
 defineProps<{ page: number; totalPages: number }>()

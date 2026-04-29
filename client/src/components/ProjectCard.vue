@@ -1,5 +1,5 @@
 <template>
-  <div class="project-card">
+  <article class="project-card">
     <h3 class="project-name">{{ project.name }}</h3>
     <p class="project-desc">{{ project.description }}</p>
     <div class="tech-stack" v-if="project.techStack?.length">
@@ -9,7 +9,7 @@
       <a v-if="project.github" :href="project.github" target="_blank">GitHub</a>
       <a v-if="project.homepage" :href="project.homepage" target="_blank">主页</a>
     </div>
-  </div>
+  </article>
 </template>
 
 <script setup lang="ts">
@@ -25,7 +25,8 @@ defineProps<{
 </script>
 
 <style scoped>
-.project-card { padding: 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-surface); }
+.project-card { padding: 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-surface); transition: box-shadow var(--transition-normal), transform var(--transition-normal); cursor: pointer; }
+.project-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .project-name { font-size: 1.15rem; margin-bottom: 0.5rem; }
 .project-desc { color: var(--color-text-secondary); font-size: 0.9rem; line-height: 1.5; margin-bottom: 0.75rem; }
 .tech-stack { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.75rem; }

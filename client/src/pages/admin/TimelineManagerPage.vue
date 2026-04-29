@@ -140,8 +140,9 @@ function doDelete(id: number) {
   border-radius: var(--radius);
   cursor: pointer;
   font-size: 0.95rem;
+  transition: filter var(--transition-fast);
 }
-.btn-primary:hover { opacity: 0.9; }
+.btn-primary:hover { filter: brightness(0.9); }
 .btn-secondary {
   padding: 0.5rem 1.25rem;
   background: var(--color-bg);

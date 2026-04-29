@@ -25,7 +25,8 @@ defineProps<{
 </script>
 
 <style scoped>
-.post-card { padding: 1.5rem 0; border-bottom: 1px solid var(--color-border); }
+.post-card { padding: 1.5rem 0; border-bottom: 1px solid var(--color-border); transition: box-shadow var(--transition-normal), transform var(--transition-normal); cursor: pointer; }
+.post-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .post-card h3 { font-size: 1.25rem; margin-bottom: 0.3rem; }
 .meta { font-size: 0.85rem; color: var(--color-text-secondary); display: flex; gap: 0.75rem; margin-bottom: 0.4rem; }
 .excerpt { color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 0.5rem; }

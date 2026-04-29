@@ -118,8 +118,9 @@ function doDelete(id: number) {
   border-radius: var(--radius);
   cursor: pointer;
   font-size: 0.95rem;
+  transition: filter var(--transition-fast);
 }
-.btn-primary:hover { opacity: 0.9; }
+.btn-primary:hover { filter: brightness(0.9); }
 .upload-btn { display: inline-block; cursor: pointer; }
 
 .attachment-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
