@@ -35,6 +35,6 @@ html.dark .katex { color: #e8d5c4; }
 .markdown-body :deep(table) { width: 100%; border-collapse: collapse; margin: 1rem 0; }
 .markdown-body :deep(th), .markdown-body :deep(td) { border: 1px solid var(--color-border); padding: 0.5rem 0.75rem; text-align: left; }
 .markdown-body :deep(th) { background: var(--color-surface); }
-.markdown-body :deep(.katex-display) { margin: 1rem 0; overflow-x: auto; }
+.markdown-body :deep(.katex-display) { margin: 1.5rem 0; overflow-x: auto; overflow-y: visible; padding: 0.5rem 0; line-height: normal; }
 .markdown-body :deep(.katex-error) { color: #d32f2f; }
 </style>
