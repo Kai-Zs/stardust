@@ -84,9 +84,15 @@ useHead({
 })
 
 onMounted(async () => {
-  post.value = (await blogStore.getPost(slug)) ?? null
-  loading.value = false
-  blogStore.fetchComments(slug)
+  try {
+    post.value = (await blogStore.getPost(slug)) ?? null
+    blogStore.fetchComments(slug)
+  } catch (e) {
+    console.error('加载文章失败:', e)
+    post.value = null
+  } finally {
+    loading.value = false
+  }
 })
 
 function buildCommentTree(comments: StoreComment[]): DisplayComment[] {

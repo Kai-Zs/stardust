@@ -12,6 +12,9 @@
 import { computed, onMounted } from 'vue'
 import { useHead } from '@unhead/vue'
 import { useSiteStore } from '../stores/site'
+import MarkdownRenderer from '../components/MarkdownRenderer.vue'
+// TODO: 阶段三接入真实API后移除 mockSiteConfig
+import { mockSiteConfig } from '../mock/data'
 
 useHead({
   title: '关于 — 星霜记',
@@ -22,9 +25,6 @@ useHead({
     { property: 'og:type', content: 'website' },
   ],
 })
-import MarkdownRenderer from '../components/MarkdownRenderer.vue'
-// TODO: 后续改为 siteStore.init() 从后端获取配置，替换 mockSiteConfig 直接导入
-import { mockSiteConfig } from '../mock/data'
 
 const siteStore = useSiteStore()
 

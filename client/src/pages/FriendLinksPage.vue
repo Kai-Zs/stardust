@@ -2,25 +2,27 @@
   <div class="container friend-links-page">
     <h1>友链</h1>
     <p class="page-subtitle">在茫茫网海中，与有趣的灵魂相遇</p>
-    <div class="links-grid">
-      <a
-        v-for="link in blogStore.friendLinks"
-        :key="link.id"
-        :href="link.url"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="link-card"
-      >
-        <span class="link-avatar">{{ link.name.charAt(0) }}</span>
-        <span class="link-name">{{ link.name }}</span>
-        <span class="link-desc">{{ link.description }}</span>
-      </a>
-    </div>
     <div v-if="blogStore.loading" class="loading-state">
       <div class="loading-spinner"></div>
       <p>加载中…</p>
     </div>
-    <EmptyState v-else-if="!blogStore.friendLinks.length">暂无友链</EmptyState>
+    <template v-else>
+      <div class="links-grid">
+        <a
+          v-for="link in blogStore.friendLinks"
+          :key="link.id"
+          :href="link.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link-card"
+        >
+          <span class="link-avatar">{{ link.name.charAt(0) }}</span>
+          <span class="link-name">{{ link.name }}</span>
+          <span class="link-desc">{{ link.description }}</span>
+        </a>
+      </div>
+      <EmptyState v-if="!blogStore.friendLinks.length">暂无友链</EmptyState>
+    </template>
   </div>
 </template>
 

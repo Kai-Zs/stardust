@@ -25,7 +25,7 @@ import { useSiteStore } from '../stores/site'
 import { useThemeStore } from '../stores/theme'
 import { useBlogStore } from '../stores/blog'
 import PostCard from '../components/PostCard.vue'
-// TODO: 后续改为 siteStore.init() 从后端获取配置，替换 mockSiteConfig 直接导入
+// TODO: 阶段三接入真实API后移除 mockSiteConfig
 import { mockSiteConfig } from '../mock/data'
 
 useHead({
