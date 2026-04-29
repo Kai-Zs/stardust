@@ -269,6 +269,7 @@
   color: var(--color-text-secondary);
 }
 .admin-field input[type='text'],
+.admin-field input[type='password'],
 .admin-field input[type='url'],
 .admin-field input[type='email'],
 .admin-field input[type='date'],
