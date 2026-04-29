@@ -153,8 +153,10 @@ onMounted(async () => {
       form.content = existing.content
       form.allowComment = existing.commentEnabled
     }
+  } else {
+    // 仅在创建模式下恢复草稿，避免编辑模式下用 localStorage 覆盖已加载的文章数据
+    loadDraft()
   }
-  loadDraft()  // 草稿优先级更高，如果有的话覆盖
   startAutoSave()
   window.addEventListener('beforeunload', beforeUnload)
 })

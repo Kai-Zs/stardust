@@ -104,10 +104,27 @@ function confirmRestore() {
 }
 
 function doRestore() {
-  // TODO: 对接真实数据恢复 API
-  toast.success('数据已恢复')
-  restoreFile.value = null
-  showRestoreModal.value = false
+  if (!restoreFile.value) return
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    try {
+      const text = (e.target as FileReader).result as string
+      const data = JSON.parse(text)
+      console.log('备份文件已读取，版本:', data?.version, '导出时间:', data?.exportedAt)
+      // TODO: 对接真实数据恢复 API，将解析后的 data 发送到后端进行恢复
+      toast.success('备份文件已解析，请对接后端 API 完成恢复')
+    } catch {
+      toast.error('备份文件格式无效，请检查后重试')
+    } finally {
+      restoreFile.value = null
+      showRestoreModal.value = false
+    }
+  }
+  reader.onerror = () => {
+    toast.error('文件读取失败')
+    showRestoreModal.value = false
+  }
+  reader.readAsText(restoreFile.value)
 }
 </script>
 

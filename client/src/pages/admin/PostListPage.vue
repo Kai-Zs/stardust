@@ -104,7 +104,7 @@ const posts = computed<Post[]>(() =>
   adminStore.allPosts.map((p, i) => ({
     id: i + 1,
     title: p.title,
-    status: 'published' as const,
+    status: ((p as Record<string, unknown>).status as 'published' | 'draft') || 'published',
     tags: p.tags,
     date: p.date,
     slug: p.slug,

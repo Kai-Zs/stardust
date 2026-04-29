@@ -163,7 +163,7 @@ async function updateStatus(id: number, status: 'approved' | 'hidden') {
       toast.error('操作失败')
     }
   } else {
-    // 隐藏：暂无 store 方法，本地更新
+    // TODO: 对接真实API — 当前仅本地状态更新
     const c = adminStore.allComments.find((c) => c.id === id)
     if (c) c.status = 'hidden'
     toast.success('评论已隐藏')

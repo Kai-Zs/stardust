@@ -76,11 +76,15 @@ const adminStore = useAdminStore()
 
 const stats = computed(() => {
   const ds = adminStore.dashboardStats
+  const all = adminStore.allPosts
+  const publishedCount = all.filter((p) => (p as Record<string, unknown>).status !== 'draft').length
+  const draftCount = all.filter((p) => (p as Record<string, unknown>).status === 'draft').length
+  const pendingCount = adminStore.allComments.filter((c) => c.status === 'pending').length
   return {
-    totalPosts: ds?.totalPosts ?? 0,
-    publishedPosts: ds?.totalPosts ?? 0,
-    draftPosts: 0,
-    pendingComments: 0,
+    totalPosts: ds?.totalPosts ?? all.length,
+    publishedPosts: publishedCount,
+    draftPosts: draftCount,
+    pendingComments: pendingCount,
   }
 })
 
