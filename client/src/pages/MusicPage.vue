@@ -114,7 +114,7 @@ function stopProgress() {
 </script>
 
 <style scoped>
-.music-page { padding-top: 2rem; }
+.music-page { }
 .music-page h1 { font-family: var(--font-serif); font-size: 2rem; margin-bottom: 1.5rem; }
 .player-section { margin-bottom: 2rem; }
 .error-msg { text-align: center; color: #d32f2f; margin-top: 1.5rem; padding: 1rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); }
