@@ -97,13 +97,9 @@ defineEmits<{
     background 0.2s ease,
     color 0.4s ease,
     border-color 0.4s ease;
-  border-bottom: 1px solid transparent;
 }
 .song-item + .song-item {
-  border-bottom-color: var(--color-border);
-}
-.song-item:last-child {
-  border-bottom-color: transparent;
+  border-top: 1px solid var(--color-border);
 }
 .song-item:hover {
   background: var(--color-bg);
