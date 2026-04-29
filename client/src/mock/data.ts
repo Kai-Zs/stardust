@@ -1,5 +1,6 @@
 export const mockPosts = [
   {
+    id: 1,
     slug: 'hello-world',
     title: '你好，星霜记',
     date: '2026-04-28',
@@ -12,6 +13,7 @@ export const mockPosts = [
     pinned: true,
   },
   {
+    id: 2,
     slug: 'vue3-learning',
     title: 'Vue3 学习笔记：组合式 API',
     date: '2026-04-25',
@@ -24,6 +26,7 @@ export const mockPosts = [
     pinned: false,
   },
   {
+    id: 3,
     slug: 'typescript-tips',
     title: 'TypeScript 实用技巧',
     date: '2026-04-20',

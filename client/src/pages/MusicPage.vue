@@ -39,6 +39,9 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useHead } from '@unhead/vue'
 import PlayerControls from '../components/PlayerControls.vue'
+import Playlist from '../components/Playlist.vue'
+import { useBlogStore } from '../stores/blog'
+import type { PlaylistSong } from '../stores/blog'
 
 useHead({
   title: '音乐 — 星霜记',
@@ -49,9 +52,6 @@ useHead({
     { property: 'og:type', content: 'website' },
   ],
 })
-import Playlist from '../components/Playlist.vue'
-import { useBlogStore } from '../stores/blog'
-import type { PlaylistSong } from '../stores/blog'
 
 const blogStore = useBlogStore()
 onMounted(() => blogStore.fetchPlaylist())

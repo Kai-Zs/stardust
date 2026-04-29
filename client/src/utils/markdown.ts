@@ -161,7 +161,6 @@ export function renderMarkdown(content: string): string {
       'width',
       'height',
       'data-copyable',
-      'style',
     ],
   })
 }

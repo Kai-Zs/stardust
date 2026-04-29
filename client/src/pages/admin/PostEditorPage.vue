@@ -141,8 +141,20 @@ function beforeUnload(e: BeforeUnloadEvent) {
   }
 }
 
-onMounted(() => {
-  loadDraft()
+onMounted(async () => {
+  if (isEdit.value) {
+    await adminStore.fetchAllPosts()
+    const existing = adminStore.allPosts.find(p => String(p.id) === String(route.params.id))
+    if (existing) {
+      form.title = existing.title
+      form.slug = existing.slug
+      form.summary = existing.excerpt
+      form.tagsInput = existing.tags.join(', ')
+      form.content = existing.content
+      form.allowComment = existing.commentEnabled
+    }
+  }
+  loadDraft()  // 草稿优先级更高，如果有的话覆盖
   startAutoSave()
   window.addEventListener('beforeunload', beforeUnload)
 })

@@ -13,6 +13,7 @@ import {
 // ========== 类型定义 ==========
 
 export interface Post {
+  id: number
   slug: string
   title: string
   date: string
@@ -121,8 +122,13 @@ export const useBlogStore = defineStore('blog', () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
+  // 计数器方案：解决并发请求时 loading 状态竞争问题
+  let loadingCount = 0
+  function startLoading() { loadingCount++; loading.value = true }
+  function endLoading() { if (--loadingCount <= 0) { loadingCount = 0; loading.value = false } }
+
   async function fetchPosts() {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
@@ -130,12 +136,12 @@ export const useBlogStore = defineStore('blog', () => {
     } catch (e) {
       error.value = (e as Error).message
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
   async function getPost(slug: string): Promise<Post | undefined> {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
@@ -144,12 +150,12 @@ export const useBlogStore = defineStore('blog', () => {
       error.value = (e as Error).message
       return undefined
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
   async function fetchProjects() {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
@@ -157,12 +163,12 @@ export const useBlogStore = defineStore('blog', () => {
     } catch (e) {
       error.value = (e as Error).message
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
   async function fetchTimeline() {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
@@ -170,12 +176,12 @@ export const useBlogStore = defineStore('blog', () => {
     } catch (e) {
       error.value = (e as Error).message
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
   async function fetchFriendLinks() {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
@@ -183,12 +189,12 @@ export const useBlogStore = defineStore('blog', () => {
     } catch (e) {
       error.value = (e as Error).message
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
   async function fetchPlaylist() {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
@@ -196,20 +202,25 @@ export const useBlogStore = defineStore('blog', () => {
     } catch (e) {
       error.value = (e as Error).message
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
-  async function fetchComments(postId: number) {
-    loading.value = true
+  async function fetchComments(slug: string) {
+    startLoading()
     error.value = null
     try {
       await delay()
-      comments.value = mockComments.filter((c) => c.post_id === postId)
+      const post = (mockPosts as Post[]).find((p) => p.slug === slug)
+      if (post) {
+        comments.value = mockComments.filter((c) => c.post_id === post.id)
+      } else {
+        comments.value = []
+      }
     } catch (e) {
       error.value = (e as Error).message
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
@@ -243,8 +254,13 @@ export const useAdminStore = defineStore('admin', () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
+  // 计数器方案：解决并发请求时 loading 状态竞争问题
+  let loadingCount = 0
+  function startLoading() { loadingCount++; loading.value = true }
+  function endLoading() { if (--loadingCount <= 0) { loadingCount = 0; loading.value = false } }
+
   async function fetchAllPosts() {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
@@ -252,16 +268,17 @@ export const useAdminStore = defineStore('admin', () => {
     } catch (e) {
       error.value = (e as Error).message
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
   async function createPost(data: CreatePostData): Promise<Post | null> {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
       const newPost: Post = {
+        id: Date.now(),
         slug: data.title.toLowerCase().replace(/\s+/g, '-'),
         title: data.title,
         date: new Date().toISOString().slice(0, 10),
@@ -279,12 +296,12 @@ export const useAdminStore = defineStore('admin', () => {
       error.value = (e as Error).message
       return null
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
   async function updatePost(slug: string, data: UpdatePostData): Promise<Post | null> {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
@@ -296,12 +313,12 @@ export const useAdminStore = defineStore('admin', () => {
       error.value = (e as Error).message
       return null
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
   async function deletePost(slug: string): Promise<boolean> {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
@@ -313,12 +330,12 @@ export const useAdminStore = defineStore('admin', () => {
       error.value = (e as Error).message
       return false
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
   async function fetchAllComments() {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
@@ -326,29 +343,29 @@ export const useAdminStore = defineStore('admin', () => {
     } catch (e) {
       error.value = (e as Error).message
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
   async function approveComment(id: number): Promise<boolean> {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
       const comment = allComments.value.find((c) => c.id === id)
       if (!comment) throw new Error('评论不存在')
-      // mock 模式下仅模拟成功
+      comment.status = 'approved'
       return true
     } catch (e) {
       error.value = (e as Error).message
       return false
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
   async function deleteComment(id: number): Promise<boolean> {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
@@ -360,12 +377,12 @@ export const useAdminStore = defineStore('admin', () => {
       error.value = (e as Error).message
       return false
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 
   async function fetchDashboardStats() {
-    loading.value = true
+    startLoading()
     error.value = null
     try {
       await delay()
@@ -378,7 +395,7 @@ export const useAdminStore = defineStore('admin', () => {
     } catch (e) {
       error.value = (e as Error).message
     } finally {
-      loading.value = false
+      endLoading()
     }
   }
 

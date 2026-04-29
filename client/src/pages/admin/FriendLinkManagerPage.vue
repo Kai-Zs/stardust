@@ -104,24 +104,32 @@ function closeModal() {
 }
 
 async function save() {
-  const payload = {
-    name: form.name,
-    url: form.url,
-    description: form.description,
+  try {
+    const payload = {
+      name: form.name,
+      url: form.url,
+      description: form.description,
+    }
+    if (editingId.value) {
+      await api.put('/friend-links/' + editingId.value, payload)
+    } else {
+      await api.post('/friend-links', payload)
+    }
+    await blogStore.fetchFriendLinks()
+    closeModal()
+  } catch {
+    toast.error('保存失败，请重试')
   }
-  if (editingId.value) {
-    await api.put('/friend-links/' + editingId.value, payload)
-  } else {
-    await api.post('/friend-links', payload)
-  }
-  await blogStore.fetchFriendLinks()
-  closeModal()
 }
 
 async function doDelete(id: number) {
-  await api.delete('/friend-links/' + id)
-  await blogStore.fetchFriendLinks()
-  toast.success('友链已删除')
+  try {
+    await api.delete('/friend-links/' + id)
+    await blogStore.fetchFriendLinks()
+    toast.success('友链已删除')
+  } catch {
+    toast.error('删除失败，请重试')
+  }
 }
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <div class="toast-container" aria-live="polite" aria-atomic="true">
+    <div class="toast-container">
       <TransitionGroup name="toast">
         <div
           v-for="t in toasts"

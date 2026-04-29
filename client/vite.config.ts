@@ -19,7 +19,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules/vue') || id.includes('node_modules/pinia') || id.includes('node_modules/@vueuse')) {
+          if (id.includes('node_modules/vue') || id.includes('node_modules/pinia') || id.includes('node_modules/@unhead')) {
             return 'vendor-vue'
           }
           if (id.includes('node_modules/markdown-it') || id.includes('node_modules/highlight.js') || id.includes('node_modules/katex') || id.includes('node_modules/dompurify')) {

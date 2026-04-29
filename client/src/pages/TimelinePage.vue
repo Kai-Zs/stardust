@@ -13,6 +13,8 @@
 import { onMounted } from 'vue'
 import { useHead } from '@unhead/vue'
 import TimelineEntry from '../components/TimelineEntry.vue'
+import EmptyState from '../components/EmptyState.vue'
+import { useBlogStore } from '../stores/blog'
 
 useHead({
   title: '时间线 — 星霜记',
@@ -23,8 +25,6 @@ useHead({
     { property: 'og:type', content: 'website' },
   ],
 })
-import EmptyState from '../components/EmptyState.vue'
-import { useBlogStore } from '../stores/blog'
 
 const blogStore = useBlogStore()
 onMounted(() => blogStore.fetchTimeline())

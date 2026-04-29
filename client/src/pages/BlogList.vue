@@ -28,6 +28,9 @@ import { ref, computed, onMounted } from 'vue'
 import { useHead } from '@unhead/vue'
 import { useBlogStore } from '../stores/blog'
 import PostCard from '../components/PostCard.vue'
+import TagCloud from '../components/TagCloud.vue'
+import Pagination from '../components/Pagination.vue'
+import EmptyState from '../components/EmptyState.vue'
 
 useHead({
   title: '博客 — 星霜记',
@@ -38,9 +41,6 @@ useHead({
     { property: 'og:type', content: 'website' },
   ],
 })
-import TagCloud from '../components/TagCloud.vue'
-import Pagination from '../components/Pagination.vue'
-import EmptyState from '../components/EmptyState.vue'
 
 const blogStore = useBlogStore()
 

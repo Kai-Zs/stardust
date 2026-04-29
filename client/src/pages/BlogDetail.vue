@@ -1,6 +1,7 @@
 <template>
   <div class="container blog-detail">
-    <template v-if="post">
+    <div v-if="loading" class="loading">加载中...</div>
+    <template v-else-if="post">
       <article class="article">
         <header class="article-header">
           <h1>{{ post.title }}</h1>
@@ -70,6 +71,7 @@ const toast = useToastStore()
 const slug = String(route.params.slug ?? '')
 
 const post = ref<Post | null>(null)
+const loading = ref(true)
 
 useHead({
   title: computed(() => post.value ? `${post.value.title} — 星霜记` : '文章 — 星霜记'),
@@ -83,7 +85,8 @@ useHead({
 
 onMounted(async () => {
   post.value = (await blogStore.getPost(slug)) ?? null
-  blogStore.fetchComments(1)
+  loading.value = false
+  blogStore.fetchComments(slug)
 })
 
 function buildCommentTree(comments: StoreComment[]): DisplayComment[] {
@@ -271,5 +274,11 @@ function handleCommentSubmit(data: { nickname: string; content: string }) {
 }
 .not-found-inline a {
   color: var(--color-accent);
+}
+.loading {
+  text-align: center;
+  padding: 5rem 0;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
 }
 </style>

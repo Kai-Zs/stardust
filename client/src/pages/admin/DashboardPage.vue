@@ -92,51 +92,22 @@ const daysRunning = computed(() => {
   return Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24))
 })
 
-const recentComments = ref([
-  {
-    id: 1,
-    articleTitle: 'Vue3 入门教程',
-    nickname: '小明',
-    content: '写的太好了，受益匪浅！',
-    time: '2026-04-28 10:30',
-    status: 'pending',
-  },
-  {
-    id: 2,
-    articleTitle: 'TypeScript 实战',
-    nickname: '前端小白',
-    content: '请问泛型那块能再展开讲讲吗？',
-    time: '2026-04-27 15:20',
-    status: 'approved',
-  },
-  {
-    id: 3,
-    articleTitle: 'CSS 动画技巧',
-    nickname: '设计师',
-    content: '动画效果很丝滑',
-    time: '2026-04-26 09:15',
-    status: 'approved',
-  },
-  {
-    id: 4,
-    articleTitle: 'Node.js 性能优化',
-    nickname: '后端老炮',
-    content: '缓存策略这块很实用',
-    time: '2026-04-25 22:00',
-    status: 'approved',
-  },
-  {
-    id: 5,
-    articleTitle: 'Vue3 入门教程',
-    nickname: '游客123',
-    content: '收藏了',
-    time: '2026-04-24 18:45',
-    status: 'hidden',
-  },
-])
+const recentComments = computed(() => {
+  const postMap = new Map(adminStore.allPosts.map(p => [p.id, p.title]))
+  return adminStore.allComments.slice(0, 5).map(c => ({
+    id: c.id,
+    articleTitle: postMap.get(c.post_id) ?? '未知文章',
+    nickname: c.nickname,
+    content: c.content,
+    time: c.created_at,
+    status: c.status,
+  }))
+})
 
 onMounted(() => {
   adminStore.fetchDashboardStats()
+  adminStore.fetchAllPosts()
+  adminStore.fetchAllComments()
 })
 </script>
 

@@ -24,6 +24,7 @@
 import { onMounted } from 'vue'
 import { useHead } from '@unhead/vue'
 import EmptyState from '../components/EmptyState.vue'
+import { useBlogStore } from '../stores/blog'
 
 useHead({
   title: '友链 — 星霜记',
@@ -34,7 +35,6 @@ useHead({
     { property: 'og:type', content: 'website' },
   ],
 })
-import { useBlogStore } from '../stores/blog'
 
 const blogStore = useBlogStore()
 onMounted(() => blogStore.fetchFriendLinks())

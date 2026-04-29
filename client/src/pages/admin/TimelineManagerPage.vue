@@ -110,25 +110,33 @@ function closeModal() {
 }
 
 async function save() {
-  const payload = {
-    title: form.title,
-    description: form.description,
-    date: form.date,
-    icon: form.icon,
+  try {
+    const payload = {
+      title: form.title,
+      description: form.description,
+      date: form.date,
+      icon: form.icon,
+    }
+    if (editingId.value) {
+      await api.put('/timeline/' + editingId.value, payload)
+    } else {
+      await api.post('/timeline', payload)
+    }
+    await blogStore.fetchTimeline()
+    closeModal()
+  } catch {
+    toast.error('保存失败，请重试')
   }
-  if (editingId.value) {
-    await api.put('/timeline/' + editingId.value, payload)
-  } else {
-    await api.post('/timeline', payload)
-  }
-  await blogStore.fetchTimeline()
-  closeModal()
 }
 
 async function doDelete(id: number) {
-  await api.delete('/timeline/' + id)
-  await blogStore.fetchTimeline()
-  toast.success('时间线条目已删除')
+  try {
+    await api.delete('/timeline/' + id)
+    await blogStore.fetchTimeline()
+    toast.success('时间线条目已删除')
+  } catch {
+    toast.error('删除失败，请重试')
+  }
 }
 </script>
 

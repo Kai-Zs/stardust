@@ -23,6 +23,7 @@ useHead({
   ],
 })
 import MarkdownRenderer from '../components/MarkdownRenderer.vue'
+// TODO: 后续改为 siteStore.init() 从后端获取配置，替换 mockSiteConfig 直接导入
 import { mockSiteConfig } from '../mock/data'
 
 const siteStore = useSiteStore()

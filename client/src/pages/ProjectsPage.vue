@@ -34,6 +34,9 @@
 import { computed, onMounted } from 'vue'
 import { useHead } from '@unhead/vue'
 import ProjectCard from '../components/ProjectCard.vue'
+import EmptyState from '../components/EmptyState.vue'
+import { useBlogStore } from '../stores/blog'
+import type { Project } from '../stores/blog'
 
 useHead({
   title: '项目 — 星霜记',
@@ -44,9 +47,6 @@ useHead({
     { property: 'og:type', content: 'website' },
   ],
 })
-import EmptyState from '../components/EmptyState.vue'
-import { useBlogStore } from '../stores/blog'
-import type { Project } from '../stores/blog'
 
 const blogStore = useBlogStore()
 onMounted(() => blogStore.fetchProjects())

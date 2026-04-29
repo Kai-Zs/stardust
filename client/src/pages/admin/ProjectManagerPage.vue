@@ -176,31 +176,39 @@ function closeModal() {
 }
 
 async function save() {
-  const tech_stack = form.techStackInput
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean)
-  const payload = {
-    name: form.name,
-    description: form.description,
-    tech_stack,
-    github_url: form.githubUrl || null,
-    homepage_url: form.homeUrl || null,
-    featured: form.featured,
+  try {
+    const tech_stack = form.techStackInput
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    const payload = {
+      name: form.name,
+      description: form.description,
+      tech_stack,
+      github_url: form.githubUrl || null,
+      homepage_url: form.homeUrl || null,
+      featured: form.featured,
+    }
+    if (editingId.value) {
+      await api.put('/projects/' + editingId.value, payload)
+    } else {
+      await api.post('/projects', payload)
+    }
+    await blogStore.fetchProjects()
+    closeModal()
+  } catch {
+    toast.error('保存失败，请重试')
   }
-  if (editingId.value) {
-    await api.put('/projects/' + editingId.value, payload)
-  } else {
-    await api.post('/projects', payload)
-  }
-  await blogStore.fetchProjects()
-  closeModal()
 }
 
 async function doDelete(id: number) {
-  await api.delete('/projects/' + id)
-  await blogStore.fetchProjects()
-  toast.success('项目已删除')
+  try {
+    await api.delete('/projects/' + id)
+    await blogStore.fetchProjects()
+    toast.success('项目已删除')
+  } catch {
+    toast.error('删除失败，请重试')
+  }
 }
 </script>
 
