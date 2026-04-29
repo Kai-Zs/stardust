@@ -139,8 +139,6 @@ export function renderMarkdown(content: string): string {
       'span',
       'div',
       'button',
-      'input',
-      'label',
       'sup',
       'sub',
       'details',

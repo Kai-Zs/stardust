@@ -1,5 +1,5 @@
 <template>
-  <slot v-if="!error" />
+  <slot v-if="!error" :key="retryKey" />
   <div v-else class="error-boundary">
     <h2>出错了</h2>
     <p>{{ error.message || '发生了一个意外错误' }}</p>
@@ -11,6 +11,7 @@
 import { ref, onErrorCaptured } from 'vue'
 
 const error = ref<Error | null>(null)
+const retryKey = ref(0)
 
 onErrorCaptured((err) => {
   error.value = err
@@ -18,6 +19,7 @@ onErrorCaptured((err) => {
 })
 
 function retry() {
+  retryKey.value++
   error.value = null
 }
 </script>

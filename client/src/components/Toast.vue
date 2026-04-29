@@ -23,7 +23,7 @@ import { useToastStore } from '../stores/toast'
 
 const { toasts, remove } = useToastStore()
 
-const iconMap: Record<string, string> = {
+const iconMap: Record<'success' | 'error' | 'warning' | 'info', string> = {
   success: '✓',
   error: '✕',
   info: 'ℹ',
