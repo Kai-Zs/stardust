@@ -1,6 +1,7 @@
 <template>
   <div class="container projects-page">
     <h1>项目</h1>
+    <p class="page-subtitle">代码是另一种诗歌</p>
 
     <section class="featured-projects" v-if="featuredProjects.length">
       <h2>精选项目</h2>
@@ -62,8 +63,49 @@ const regularProjects = computed(() => projects.value.filter(p => !p.featured))
 </script>
 
 <style scoped>
-.projects-page h1 { font-size: 1.8rem; margin-bottom: 1.5rem; }
-.featured-projects { margin-bottom: 2rem; }
-.featured-projects h2, .all-projects h2 { font-size: 1.2rem; margin-bottom: 1rem; color: var(--color-text-secondary); }
-.project-grid { display: grid; gap: 1rem; }
+.projects-page { padding-bottom: 3rem; }
+.projects-page h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  animation: fadeDown 0.5s ease both;
+}
+@keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+.page-subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+  animation: fadeDown 0.5s ease both;
+  animation-delay: 0.08s;
+}
+
+.featured-projects {
+  margin-bottom: 2rem;
+  animation: fadeIn 0.5s ease both;
+  animation-delay: 0.1s;
+}
+.all-projects {
+  animation: fadeIn 0.5s ease both;
+  animation-delay: 0.2s;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.featured-projects h2, .all-projects h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-secondary);
+}
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+/* 卡片 stagger 入场 */
+.project-grid :deep(.project-card) { animation: cardIn 0.4s ease both; }
+.project-grid :deep(.project-card:nth-child(1)) { animation-delay: 0.15s; }
+.project-grid :deep(.project-card:nth-child(2)) { animation-delay: 0.22s; }
+.project-grid :deep(.project-card:nth-child(3)) { animation-delay: 0.29s; }
+.project-grid :deep(.project-card:nth-child(4)) { animation-delay: 0.36s; }
+@keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 </style>

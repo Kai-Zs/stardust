@@ -1,21 +1,30 @@
 <template>
   <div class="manager-page">
-    <div class="page-header">
-      <h1>评论管理</h1>
-      <!-- 状态筛选 -->
-      <div class="status-filter">
-        <button
-          v-for="s in statusOptions"
-          :key="s.value"
-          class="filter-btn"
-          :class="{ active: currentStatus === s.value }"
-          @click="currentStatus = s.value"
-        >{{ s.label }} ({{ countByStatus(s.value) }})</button>
+    <div class="admin-page-header">
+      <div>
+        <h1>评论管理</h1>
+        <div class="admin-page-subtitle">管理访客评论，审核或屏蔽不当内容</div>
       </div>
     </div>
 
+    <!-- 搜索 -->
+    <div class="admin-search-bar">
+      <input v-model="keyword" class="admin-search-input" type="text" placeholder="搜索昵称、内容或文章标题…" />
+    </div>
+
+    <!-- 状态筛选 -->
+    <div class="admin-filter-bar" style="margin-bottom: 1rem;">
+      <button
+        v-for="s in statusOptions"
+        :key="s.value"
+        class="admin-filter-btn"
+        :class="{ active: currentStatus === s.value }"
+        @click="currentStatus = s.value"
+      >{{ s.label }} ({{ countByStatus(s.value) }})</button>
+    </div>
+
     <!-- 评论表格 -->
-    <table class="table" v-if="filteredComments.length > 0">
+    <table class="admin-table" v-if="filteredComments.length > 0">
       <thead>
         <tr>
           <th>文章</th>
@@ -35,18 +44,18 @@
           <td>{{ c.ipLocation }}</td>
           <td>{{ c.time }}</td>
           <td>
-            <span class="tag" :class="c.status">{{ statusLabel(c.status) }}</span>
+            <span class="admin-tag" :class="'status-' + c.status">{{ statusLabel(c.status) }}</span>
           </td>
           <td class="actions">
-            <button v-if="c.status === 'pending'" class="btn-sm btn-approve" @click="updateStatus(c.id, 'approved')">通过</button>
-            <button v-if="c.status !== 'hidden'" class="btn-sm" @click="updateStatus(c.id, 'hidden')">隐藏</button>
-            <button class="btn-sm btn-danger" @click="doDelete(c.id)">删除</button>
-            <button class="btn-sm btn-warn" @click="banIp(c.ip)">封禁 IP</button>
+            <button v-if="c.status === 'pending'" class="admin-btn-sm admin-btn-approve" @click="updateStatus(c.id, 'approved')">通过</button>
+            <button v-if="c.status !== 'hidden'" class="admin-btn-sm" @click="updateStatus(c.id, 'hidden')">隐藏</button>
+            <button class="admin-btn-sm admin-btn-danger" @click="doDelete(c.id)">删除</button>
+            <button class="admin-btn-sm admin-btn-warn" @click="banIp(c.ip)">封禁 IP</button>
           </td>
         </tr>
       </tbody>
     </table>
-    <p v-else class="empty">暂无评论</p>
+    <p v-else class="admin-empty">暂无匹配的评论</p>
   </div>
 </template>
 
@@ -72,6 +81,7 @@ const comments = ref<Comment[]>([
   { id: 5, articleTitle: 'Vue3 入门教程', nickname: '游客123', content: '收藏了', ip: '192.168.2.5', ipLocation: '广州', time: '2026-04-24 18:45', status: 'pending' },
 ])
 
+const keyword = ref('')
 const currentStatus = ref<string>('all')
 
 const statusOptions = [
@@ -82,13 +92,24 @@ const statusOptions = [
 ]
 
 function countByStatus(status: string) {
-  if (status === 'all') return comments.value.length
-  return comments.value.filter(c => c.status === status).length
+  const base = keywordFiltered.value
+  if (status === 'all') return base.length
+  return base.filter(c => c.status === status).length
 }
 
+const keywordFiltered = computed(() => {
+  if (!keyword.value.trim()) return comments.value
+  const kw = keyword.value.trim().toLowerCase()
+  return comments.value.filter(c =>
+    c.nickname.toLowerCase().includes(kw) ||
+    c.content.toLowerCase().includes(kw) ||
+    c.articleTitle.toLowerCase().includes(kw),
+  )
+})
+
 const filteredComments = computed(() => {
-  if (currentStatus.value === 'all') return comments.value
-  return comments.value.filter(c => c.status === currentStatus.value)
+  if (currentStatus.value === 'all') return keywordFiltered.value
+  return keywordFiltered.value.filter(c => c.status === currentStatus.value)
 })
 
 function statusLabel(status: string) {
@@ -112,50 +133,9 @@ function banIp(ip: string) {
 
 <style scoped>
 .manager-page { max-width: 1100px; margin: 0 auto; }
-
-.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
-.page-header h1 { margin: 0; }
-
-.status-filter { display: flex; gap: 0.4rem; }
-.filter-btn {
-  padding: 0.3rem 0.75rem;
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--color-text);
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-.filter-btn.active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
-
-.table { width: 100%; border-collapse: collapse; background: var(--color-surface); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--color-border); }
-.table th, .table td { padding: 0.6rem 0.75rem; text-align: left; border-bottom: 1px solid var(--color-border); font-size: 0.85rem; }
-.table th { background: var(--color-bg); color: var(--color-text-secondary); font-weight: 600; }
-.comment-content { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-.tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.75rem; }
-.tag.pending { background: #fff3cd; color: #856404; }
-.tag.approved { background: #d4edda; color: #155724; }
-.tag.hidden { background: #f8d7da; color: #721c24; }
-
+.comment-content { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.status-pending { background: var(--color-warning-bg); color: var(--color-warning-text); }
+.status-approved { background: var(--color-success-bg); color: var(--color-success-text); }
+.status-hidden { background: var(--color-danger-bg); color: var(--color-danger-text); }
 .actions { white-space: nowrap; }
-.btn-sm {
-  padding: 0.2rem 0.5rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  background: transparent;
-  cursor: pointer;
-  font-size: 0.78rem;
-  margin-right: 0.2rem;
-  color: var(--color-text);
-}
-.btn-sm:hover { background: var(--color-bg); }
-.btn-danger { color: #dc3545; border-color: #dc3545; }
-.btn-danger:hover { background: #dc3545; color: #fff; }
-.btn-approve { color: #28a745; border-color: #28a745; }
-.btn-approve:hover { background: #28a745; color: #fff; }
-.btn-warn { color: #e67e22; border-color: #e67e22; }
-.btn-warn:hover { background: #e67e22; color: #fff; }
-
-.empty { color: var(--color-text-secondary); text-align: center; padding: 2rem; }
 </style>

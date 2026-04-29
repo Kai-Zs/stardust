@@ -1,30 +1,35 @@
 <template>
   <div class="container music-page">
-    <h1>音乐</h1>
+    <header class="page-header">
+      <h1>音乐</h1>
+      <p class="page-subtitle">愿每一段旋律，都能温柔你的时光</p>
+    </header>
 
-    <section class="player-section">
-      <PlayerControls
-        :current="currentSong"
-        :playing="playing"
-        :progress="progress"
-        :current-time="currentTime"
-        :duration="duration"
-        @toggle="togglePlay"
-        @prev="prevSong"
-        @next="nextSong"
-        @seek="handleSeek"
-      />
-    </section>
+    <div class="music-layout">
+      <section class="player-section">
+        <PlayerControls
+          :current="currentSong"
+          :playing="playing"
+          :progress="progress"
+          :current-time="currentTime"
+          :duration="duration"
+          @toggle="togglePlay"
+          @prev="prevSong"
+          @next="nextSong"
+          @seek="handleSeek"
+        />
+      </section>
 
-    <section class="playlist-section">
-      <Playlist
-        :name="playlist.name"
-        :description="playlist.description"
-        :songs="playlist.songs"
-        :current-index="currentIndex"
-        @select="selectSong"
-      />
-    </section>
+      <section class="playlist-section">
+        <Playlist
+          :name="playlist.name"
+          :description="playlist.description"
+          :songs="playlist.songs"
+          :current-index="currentIndex"
+          @select="selectSong"
+        />
+      </section>
+    </div>
 
     <div v-if="error" class="error-msg">歌曲加载失败，请稍后重试</div>
   </div>
@@ -114,8 +119,16 @@ function stopProgress() {
 </script>
 
 <style scoped>
-.music-page { }
-.music-page h1 { font-family: var(--font-serif); font-size: 2rem; margin-bottom: 1.5rem; }
-.player-section { margin-bottom: 2rem; }
-.error-msg { text-align: center; color: #d32f2f; margin-top: 1.5rem; padding: 1rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); }
+.music-page { padding-bottom: 3rem; }
+.page-header { text-align: center; margin-bottom: 2.5rem; animation: fadeDown 0.5s ease both; }
+@keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+.page-header h1 { font-family: var(--font-serif); font-size: 2.2rem; margin-bottom: 0.4rem; letter-spacing: 0.06em; }
+.page-subtitle { color: var(--color-text-secondary); font-size: 0.95rem; font-style: italic; letter-spacing: 0.04em; }
+.music-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+.player-section { position: sticky; top: 5rem; }
+.error-msg { text-align: center; color: var(--color-error); margin-top: 1.5rem; padding: 1rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); }
+@media (max-width: 768px) {
+  .music-layout { grid-template-columns: 1fr; }
+  .player-section { position: static; }
+}
 </style>

@@ -149,7 +149,7 @@ function doRestore() {
 
 .btn-danger {
   padding: 0.5rem 1.5rem;
-  background: #dc3545;
+  background: var(--color-danger);
   color: #fff;
   border: none;
   border-radius: var(--radius);

@@ -104,19 +104,80 @@ function handleCommentSubmit(data: { nickname: string; content: string }) {
 </script>
 
 <style scoped>
-.blog-detail { padding-top: 2rem; }
-.article-header { margin-bottom: 2rem; }
-.article-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-.article-meta { display: flex; gap: 1rem; color: var(--color-text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem; }
-.article-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.tag { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 0.15rem 0.6rem; font-size: 0.8rem; }
-.article-body { margin-bottom: 2.5rem; }
-.ai-summary { margin-bottom: 2rem; }
-.ai-summary details { border: 1px solid var(--color-border); border-radius: var(--radius); padding: 1rem; background: var(--color-surface); }
+.blog-detail { padding-top: 2rem; padding-bottom: 3rem; }
+
+/* 文章头部 — 逐级入场 */
+.article-header {
+  margin-bottom: 2.5rem;
+  animation: fadeDown 0.5s ease both;
+}
+.article-header h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
+}
+.article-meta {
+  display: flex; gap: 1rem;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  animation: fadeDown 0.5s ease both;
+  animation-delay: 0.1s;
+}
+.article-tags {
+  display: flex; gap: 0.5rem; flex-wrap: wrap;
+  animation: fadeDown 0.5s ease both;
+  animation-delay: 0.2s;
+}
+@keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+
+.tag { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 0.15rem 0.6rem; font-size: 0.8rem; transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease; }
+
+/* 文章正文 */
+.article-body {
+  margin-bottom: 2.5rem;
+  animation: fadeIn 0.6s ease both;
+  animation-delay: 0.25s;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* AI 摘要 */
+/* 文章与评论区装饰分隔 */
+.ai-summary::before,
+.comments::before {
+  content: '✦';
+  display: block;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--color-accent);
+  opacity: 0.35;
+  margin-bottom: 1.5rem;
+  letter-spacing: 1em;
+  transition: color 0.4s ease;
+}
+.ai-summary {
+  margin-bottom: 2rem;
+  animation: fadeDown 0.5s ease both;
+  animation-delay: 0.35s;
+}
+.ai-summary details { border: 1px solid var(--color-border); border-radius: var(--radius); padding: 1rem; background: var(--color-surface); transition: background-color 0.4s ease, border-color 0.4s ease; }
 .ai-summary summary { cursor: pointer; user-select: none; }
 .summary-title { font-weight: 600; }
 .summary-hint { color: var(--color-text-secondary); font-size: 0.85rem; }
 .summary-placeholder { margin-top: 0.75rem; color: var(--color-text-secondary); font-size: 0.9rem; }
-.comments h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+
+/* 评论区入场 */
+.comments {
+  animation: fadeUp 0.5s ease both;
+  animation-delay: 0.4s;
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.comments h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+  transition: border-color 0.4s ease;
+}
 .no-comments-hint { text-align: center; color: var(--color-text-secondary); padding: 2rem 0; }
 </style>

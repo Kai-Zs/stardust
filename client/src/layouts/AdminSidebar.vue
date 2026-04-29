@@ -5,12 +5,17 @@
       <router-link v-for="item in menu" :key="item.to" :to="item.to" class="sidebar-link">{{ item.label }}</router-link>
     </nav>
     <div class="sidebar-footer">
-      <router-link to="/" class="back-link">&larr; 返回站点</router-link>
+      <div class="footer-actions">
+        <router-link to="/" class="back-link">&larr; 返回站点</router-link>
+        <ThemeToggle />
+      </div>
     </div>
   </aside>
 </template>
 
 <script setup lang="ts">
+import ThemeToggle from '../components/ThemeToggle.vue'
+
 const menu = [
   { to: '/admin/dashboard', label: '仪表盘' },
   { to: '/admin/posts', label: '文章管理' },
@@ -35,6 +40,7 @@ const menu = [
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 .sidebar-title {
   font-family: var(--font-serif);
@@ -67,6 +73,11 @@ const menu = [
   padding-top: 1.5rem;
   font-size: 0.85rem;
   color: var(--color-text-secondary);
+}
+.footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .back-link { transition: color var(--transition-fast); }
 .back-link:hover { color: var(--color-accent); }

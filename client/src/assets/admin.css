@@ -1,0 +1,324 @@
+/* ========================================
+   后台管理共享样式
+   ======================================== */
+
+/* 入场动画 */
+@keyframes adminSlideIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.admin-fade-in {
+  animation: adminSlideIn 0.4s ease both;
+}
+
+/* 页面标题区 */
+.admin-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  animation: adminSlideIn 0.4s ease both;
+}
+.admin-page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.admin-page-subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+}
+
+/* 搜索栏 */
+.admin-search-bar {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  animation: adminSlideIn 0.4s ease both;
+  animation-delay: 0.08s;
+}
+.admin-search-input {
+  flex: 1;
+  max-width: 320px;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.25s ease, background-color 0.4s ease, color 0.4s ease;
+}
+.admin-search-input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.6;
+}
+.admin-search-input:focus {
+  border-color: var(--color-accent);
+}
+
+/* 筛选栏 */
+.admin-filter-bar {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  align-items: center;
+  animation: adminSlideIn 0.4s ease both;
+  animation-delay: 0.1s;
+}
+.admin-filter-btn {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: border-color 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+}
+.admin-filter-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.admin-filter-btn.active {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
+}
+.admin-filter-btn.clear {
+  border-style: dashed;
+  color: var(--color-text-secondary);
+}
+
+/* 表格 */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  animation: adminSlideIn 0.4s ease both;
+  animation-delay: 0.15s;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+.admin-table th,
+.admin-table td {
+  padding: 0.6rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.88rem;
+  transition: border-color 0.4s ease;
+}
+.admin-table th {
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  transition: background-color 0.4s ease;
+}
+.admin-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+.admin-table tbody tr:hover {
+  background: color-mix(in srgb, var(--color-accent) 4%, var(--color-surface));
+}
+
+/* 状态标签 */
+.admin-tag {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* 按钮 */
+.admin-btn-primary {
+  padding: 0.5rem 1.25rem;
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: filter var(--transition-fast), background-color 0.4s ease;
+}
+.admin-btn-primary:hover { filter: brightness(0.9); }
+
+.admin-btn-secondary {
+  padding: 0.5rem 1.25rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  transition: background-color 0.25s ease, border-color 0.4s ease, color 0.4s ease;
+}
+.admin-btn-secondary:hover { background: var(--color-surface); }
+
+.admin-btn-sm {
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-right: 0.3rem;
+  color: var(--color-text);
+  transition: border-color 0.25s ease, background-color 0.25s ease, color 0.4s ease;
+}
+.admin-btn-sm:hover { background: var(--color-bg); }
+
+.admin-btn-danger {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+.admin-btn-danger:hover {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.admin-btn-approve {
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+.admin-btn-approve:hover {
+  background: var(--color-success);
+  color: #fff;
+}
+
+.admin-btn-warn {
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+.admin-btn-warn:hover {
+  background: var(--color-warning);
+  color: #fff;
+}
+
+/* 弹窗 */
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.admin-modal {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: 2rem;
+  max-width: 480px;
+  width: 90%;
+  border: 1px solid var(--color-border);
+  animation: adminSlideIn 0.3s ease both;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+.admin-modal h3 { margin-bottom: 1rem; }
+
+.admin-field {
+  margin-bottom: 1rem;
+}
+.admin-field label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+.admin-field input[type="text"],
+.admin-field input[type="url"],
+.admin-field textarea,
+.admin-field select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.25s ease, background-color 0.4s ease, color 0.4s ease;
+}
+.admin-field input:focus,
+.admin-field textarea:focus,
+.admin-field select:focus {
+  border-color: var(--color-accent);
+}
+.admin-field-inline {
+  margin-bottom: 1rem;
+}
+.admin-field-inline label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.admin-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+/* 空状态 */
+.admin-empty {
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 3rem 2rem;
+  font-style: italic;
+}
+
+/* 分页 */
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+.admin-page-btn {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.25s ease, border-color 0.4s ease;
+}
+.admin-page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.admin-page-btn:not(:disabled):hover { background: var(--color-bg); }
+.admin-page-info {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  min-width: 80px;
+  text-align: center;
+}
+
+/* 标签项 */
+.admin-tag-item {
+  display: inline-block;
+  margin-right: 0.3rem;
+  padding: 0.1rem 0.45rem;
+  background: var(--color-bg);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .admin-page-header { flex-direction: column; align-items: flex-start; }
+  .admin-search-input { max-width: 100%; }
+}

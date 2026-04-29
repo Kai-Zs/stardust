@@ -164,8 +164,8 @@ function doDelete(id: number) {
   color: var(--color-text);
 }
 .btn-sm:hover { background: var(--color-bg); }
-.btn-danger { color: #dc3545; border-color: #dc3545; }
-.btn-danger:hover { background: #dc3545; color: #fff; }
+.btn-danger { color: var(--color-danger); border-color: var(--color-danger); }
+.btn-danger:hover { background: var(--color-danger); color: #fff; }
 
 .empty { color: var(--color-text-secondary); text-align: center; padding: 2rem; }
 

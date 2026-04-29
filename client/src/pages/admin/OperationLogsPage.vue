@@ -1,9 +1,25 @@
 <template>
   <div class="manager-page">
-    <h1>操作日志</h1>
+    <div class="admin-page-header">
+      <div>
+        <h1>操作日志</h1>
+        <div class="admin-page-subtitle">记录后台所有操作行为</div>
+      </div>
+    </div>
+
+    <!-- 搜索 -->
+    <div class="admin-search-bar">
+      <input v-model="keyword" class="admin-search-input" type="text" placeholder="搜索操作对象、用户或 IP…" />
+    </div>
+
+    <!-- 操作类型筛选 -->
+    <div class="admin-filter-bar" style="margin-bottom: 1rem;">
+      <button class="admin-filter-btn" :class="{ active: !activeType }" @click="activeType = ''">全部 ({{ logs.length }})</button>
+      <button v-for="t in allTypes" :key="t" class="admin-filter-btn" :class="{ active: activeType === t }" @click="activeType = activeType === t ? '' : t">{{ t }} ({{ countByType(t) }})</button>
+    </div>
 
     <!-- 日志表格 -->
-    <table class="table" v-if="paginatedLogs.length > 0">
+    <table class="admin-table" v-if="paginatedLogs.length > 0">
       <thead>
         <tr>
           <th>ID</th>
@@ -19,7 +35,7 @@
           <td>{{ log.id }}</td>
           <td>{{ log.user }}</td>
           <td>
-            <span class="tag" :class="log.actionType">{{ log.actionType }}</span>
+            <span class="admin-tag" :class="'type-' + log.actionType">{{ log.actionType }}</span>
           </td>
           <td>{{ log.target }}</td>
           <td>{{ log.ip }}</td>
@@ -27,31 +43,15 @@
         </tr>
       </tbody>
     </table>
-    <p v-else class="empty">暂无操作日志</p>
+    <p v-else class="admin-empty">暂无匹配的操作日志</p>
 
     <!-- 分页 -->
-    <div class="pagination" v-if="totalPages > 1">
-      <button
-        class="page-btn"
-        :disabled="currentPage === 1"
-        @click="currentPage = 1"
-      >首页</button>
-      <button
-        class="page-btn"
-        :disabled="currentPage === 1"
-        @click="currentPage--"
-      >上一页</button>
-      <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
-      <button
-        class="page-btn"
-        :disabled="currentPage === totalPages"
-        @click="currentPage++"
-      >下一页</button>
-      <button
-        class="page-btn"
-        :disabled="currentPage === totalPages"
-        @click="currentPage = totalPages"
-      >末页</button>
+    <div class="admin-pagination" v-if="totalPages > 1">
+      <button class="admin-page-btn" :disabled="currentPage === 1" @click="currentPage = 1">首页</button>
+      <button class="admin-page-btn" :disabled="currentPage === 1" @click="currentPage--">上一页</button>
+      <span class="admin-page-info">{{ currentPage }} / {{ totalPages }}</span>
+      <button class="admin-page-btn" :disabled="currentPage === totalPages" @click="currentPage++">下一页</button>
+      <button class="admin-page-btn" :disabled="currentPage === totalPages" @click="currentPage = totalPages">末页</button>
     </div>
   </div>
 </template>
@@ -83,49 +83,54 @@ const logs = ref<OperationLog[]>([
   { id: 17, user: '管理员', actionType: '发布', target: '文章 #4', ip: '127.0.0.1', time: '2026-04-23 14:20:00' },
 ])
 
+const keyword = ref('')
+const activeType = ref('')
 const pageSize = 10
 const currentPage = ref(1)
 
-const totalPages = computed(() => Math.ceil(logs.value.length / pageSize))
+const allTypes = computed(() => {
+  const set = new Set<string>()
+  logs.value.forEach(l => set.add(l.actionType))
+  return Array.from(set).sort()
+})
+
+function countByType(type: string) {
+  return filteredBySearch.value.filter(l => l.actionType === type).length
+}
+
+const filteredBySearch = computed(() => {
+  let result = logs.value
+  if (keyword.value.trim()) {
+    const kw = keyword.value.trim().toLowerCase()
+    result = result.filter(l =>
+      l.target.toLowerCase().includes(kw) ||
+      l.user.toLowerCase().includes(kw) ||
+      l.ip.includes(kw),
+    )
+  }
+  if (activeType.value) {
+    result = result.filter(l => l.actionType === activeType.value)
+  }
+  return result
+})
+
+const totalPages = computed(() => Math.ceil(filteredBySearch.value.length / pageSize))
 
 const paginatedLogs = computed(() => {
   const start = (currentPage.value - 1) * pageSize
-  return logs.value.slice(start, start + pageSize)
+  return filteredBySearch.value.slice(start, start + pageSize)
 })
 </script>
 
 <style scoped>
 .manager-page { max-width: 1000px; margin: 0 auto; }
-.manager-page h1 { margin-bottom: 1.5rem; }
-
-.table { width: 100%; border-collapse: collapse; background: var(--color-surface); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--color-border); }
-.table th, .table td { padding: 0.6rem 0.9rem; text-align: left; border-bottom: 1px solid var(--color-border); font-size: 0.85rem; }
-.table th { background: var(--color-bg); color: var(--color-text-secondary); font-weight: 600; }
-
-.tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.75rem; background: var(--color-bg); color: var(--color-text-secondary); }
-.tag.登录 { background: #d4edda; color: #155724; }
-.tag.发布 { background: #cce5ff; color: #004085; }
-.tag.编辑 { background: #fff3cd; color: #856404; }
-.tag.删除 { background: #f8d7da; color: #721c24; }
-.tag.审核 { background: #e2d5f1; color: #5a3d7a; }
-.tag.封禁 { background: #f8d7da; color: #721c24; }
-.tag.上传 { background: #d1ecf1; color: #0c5460; }
-.tag.配置 { background: #e8d5c4; color: #5d4037; }
-.tag.备份 { background: #d4edda; color: #155724; }
-
-.empty { color: var(--color-text-secondary); text-align: center; padding: 2rem; }
-
-.pagination { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1.5rem; }
-.page-btn {
-  padding: 0.3rem 0.75rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  background: var(--color-surface);
-  color: var(--color-text);
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.page-btn:not(:disabled):hover { background: var(--color-bg); }
-.page-info { font-size: 0.9rem; color: var(--color-text-secondary); min-width: 80px; text-align: center; }
+.type-登录 { background: var(--color-success-bg); color: var(--color-success-text); }
+.type-发布 { background: var(--color-info-bg); color: var(--color-info-text); }
+.type-编辑 { background: var(--color-warning-bg); color: var(--color-warning-text); }
+.type-删除 { background: var(--color-danger-bg); color: var(--color-danger-text); }
+.type-审核 { background: var(--color-purple-bg); color: var(--color-purple-text); }
+.type-封禁 { background: var(--color-danger-bg); color: var(--color-danger-text); }
+.type-上传 { background: var(--color-teal-bg); color: var(--color-teal-text); }
+.type-配置 { background: var(--color-border); color: var(--color-text-secondary); }
+.type-备份 { background: var(--color-success-bg); color: var(--color-success-text); }
 </style>

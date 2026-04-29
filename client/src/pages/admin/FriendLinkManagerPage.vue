@@ -160,10 +160,10 @@ function doDelete(id: number) {
 }
 .btn-sm:hover { background: var(--color-bg); }
 .btn-danger {
-  color: #dc3545;
-  border-color: #dc3545;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
 }
-.btn-danger:hover { background: #dc3545; color: #fff; }
+.btn-danger:hover { background: var(--color-danger); color: #fff; }
 
 .empty { color: var(--color-text-secondary); text-align: center; padding: 2rem; }
 

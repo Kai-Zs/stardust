@@ -1,22 +1,31 @@
 <template>
   <div class="dashboard-page">
-    <h1>仪表盘</h1>
+    <div class="admin-page-header">
+      <div>
+        <h1>仪表盘</h1>
+        <div class="admin-page-subtitle">站点概览与快捷操作</div>
+      </div>
+    </div>
 
     <!-- 统计卡片 -->
     <div class="stats-grid">
       <div class="stat-card">
+        <div class="stat-icon">📝</div>
         <div class="stat-number">{{ stats.totalPosts }}</div>
         <div class="stat-label">文章总数</div>
       </div>
       <div class="stat-card">
+        <div class="stat-icon">✅</div>
         <div class="stat-number">{{ stats.publishedPosts }}</div>
         <div class="stat-label">已发布</div>
       </div>
       <div class="stat-card">
+        <div class="stat-icon">📋</div>
         <div class="stat-number">{{ stats.draftPosts }}</div>
         <div class="stat-label">草稿</div>
       </div>
       <div class="stat-card">
+        <div class="stat-icon">💬</div>
         <div class="stat-number">{{ stats.pendingComments }}</div>
         <div class="stat-label">待审核评论</div>
       </div>
@@ -28,9 +37,9 @@
     </div>
 
     <!-- 最新评论 -->
-    <div class="section">
+    <div class="section admin-fade-in">
       <h2>最新评论</h2>
-      <table class="table" v-if="recentComments.length > 0">
+      <table class="admin-table" v-if="recentComments.length > 0">
         <thead>
           <tr>
             <th>文章</th>
@@ -47,12 +56,12 @@
             <td class="comment-content">{{ c.content }}</td>
             <td>{{ c.time }}</td>
             <td>
-              <span class="tag" :class="c.status">{{ c.status === 'approved' ? '已通过' : c.status === 'pending' ? '待审核' : '已隐藏' }}</span>
+              <span class="admin-tag" :class="'status-' + c.status">{{ c.status === 'approved' ? '已通过' : c.status === 'pending' ? '待审核' : '已隐藏' }}</span>
             </td>
           </tr>
         </tbody>
       </table>
-      <p v-else class="empty">暂无评论</p>
+      <p v-else class="admin-empty">暂无评论</p>
     </div>
   </div>
 </template>
@@ -86,16 +95,33 @@ const recentComments = ref([
 
 <style scoped>
 .dashboard-page { max-width: 960px; margin: 0 auto; }
-.dashboard-page h1 { margin-bottom: 1.5rem; }
 
-.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
 .stat-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 1.5rem;
   text-align: center;
+  animation: adminSlideIn 0.4s ease both;
+  cursor: default;
+  transition: background-color 0.4s ease, border-color 0.4s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
+.stat-card:nth-child(1) { animation-delay: 0s; }
+.stat-card:nth-child(2) { animation-delay: 0.06s; }
+.stat-card:nth-child(3) { animation-delay: 0.12s; }
+.stat-card:nth-child(4) { animation-delay: 0.18s; }
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+@keyframes adminSlideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.stat-icon { font-size: 1.4rem; margin-bottom: 0.4rem; }
 .stat-number { font-size: 2rem; font-weight: 700; color: var(--color-accent); font-family: var(--font-serif); }
 .stat-label { font-size: 0.9rem; color: var(--color-text-secondary); margin-top: 0.3rem; }
 
@@ -106,22 +132,19 @@ const recentComments = ref([
   padding: 1rem 1.5rem;
   margin-bottom: 1.5rem;
   color: var(--color-text-secondary);
+  animation: adminSlideIn 0.4s ease both;
+  animation-delay: 0.24s;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
 .section { margin-top: 1.5rem; }
 .section h2 { margin-bottom: 1rem; font-size: 1.2rem; }
 
-.table { width: 100%; border-collapse: collapse; background: var(--color-surface); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--color-border); }
-.table th, .table td { padding: 0.65rem 1rem; text-align: left; border-bottom: 1px solid var(--color-border); font-size: 0.9rem; }
-.table th { background: var(--color-bg); color: var(--color-text-secondary); font-weight: 600; }
-.comment-content { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.comment-content { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.75rem; }
-.tag.pending { background: #fff3cd; color: #856404; }
-.tag.approved { background: #d4edda; color: #155724; }
-.tag.hidden { background: #f8d7da; color: #721c24; }
-
-.empty { color: var(--color-text-secondary); text-align: center; padding: 2rem; }
+.status-pending { background: var(--color-warning-bg); color: var(--color-warning-text); }
+.status-approved { background: var(--color-success-bg); color: var(--color-success-text); }
+.status-hidden { background: var(--color-danger-bg); color: var(--color-danger-text); }
 
 @media (max-width: 768px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }

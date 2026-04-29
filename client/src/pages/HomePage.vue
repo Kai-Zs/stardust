@@ -30,9 +30,83 @@ const posts = ref(mockPosts)
 </script>
 
 <style scoped>
-.hero { text-align: center; padding: 4rem 0 2rem; }
-.hero h1 { font-family: var(--font-serif); font-size: 2.2rem; margin-bottom: 0.5rem; }
-.subtitle { color: var(--color-text-secondary); font-size: 1.1rem; }
-.recent-posts h2 { font-size: 1.3rem; margin-bottom: 1rem; }
-.more { display: inline-block; margin-top: 1rem; font-size: 0.9rem; }
+.home { padding-bottom: 3rem; }
+
+/* Hero 区域 */
+.hero {
+  text-align: center;
+  padding: 5rem 0 3rem;
+  position: relative;
+}
+/* 装饰符号 */
+.hero::before {
+  content: '✦';
+  display: block;
+  font-size: 1.4rem;
+  color: var(--color-accent);
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+  animation: heroIn 0.7s ease both, twinkle 3s ease-in-out infinite;
+  transition: color 0.4s ease;
+}
+@keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.7; } }
+.hero::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  margin: 2.5rem auto 0;
+  border-radius: 1px;
+  transition: background 0.4s ease;
+}
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: 2.6rem;
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.08em;
+  animation: heroIn 0.7s ease both;
+}
+.subtitle {
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  animation: heroIn 0.7s ease both;
+  animation-delay: 0.15s;
+}
+@keyframes heroIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 最近文章区域 */
+.recent-posts {
+  max-width: 720px;
+  margin: 0 auto;
+  animation: fadeIn 0.6s ease both;
+  animation-delay: 0.3s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.recent-posts h2 {
+  font-size: 1.3rem;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+  transition: border-color 0.4s ease;
+}
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--color-accent);
+  position: relative;
+  transition: color 0.25s ease, gap 0.3s ease;
+}
+.more:hover { gap: 0.6rem; }
 </style>

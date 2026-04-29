@@ -17,7 +17,7 @@ import AdminSidebar from './AdminSidebar.vue'
 
 <style scoped>
 .admin-layout { display: flex; min-height: 100vh; }
-.admin-main { flex: 1; padding: 2rem; min-width: 0; }
+.admin-main { flex: 1; padding: 2rem; min-width: 0; transition: background-color 0.4s ease, color 0.4s ease; }
 .page-enter-active { transition: opacity 0.25s ease-out, transform 0.25s ease-out; }
 .page-leave-active { transition: opacity 0.15s ease-in; }
 .page-enter-from { opacity: 0; transform: translateY(8px); }
