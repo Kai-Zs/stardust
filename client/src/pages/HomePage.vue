@@ -6,31 +6,34 @@
     </section>
     <section class="recent-posts">
       <h2>最近文章</h2>
-      <PostCard v-for="post in posts.slice(0, 5)" :key="post.slug" :post="post" />
+      <PostCard v-for="post in blogStore.posts.slice(0, 5)" :key="post.slug" :post="post" />
       <router-link to="/blog" class="more">查看全部 &rarr;</router-link>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useSiteStore } from '../stores/site'
 import { useThemeStore } from '../stores/theme'
+import { useBlogStore } from '../stores/blog'
 import PostCard from '../components/PostCard.vue'
-import { mockPosts, mockSiteConfig } from '../mock/data'
+import { mockSiteConfig } from '../mock/data'
 
 const siteStore = useSiteStore()
+const blogStore = useBlogStore()
 useThemeStore() // 初始化主题
 
 onMounted(() => {
   siteStore.setConfig(mockSiteConfig)
+  blogStore.fetchPosts()
 })
-
-const posts = ref(mockPosts)
 </script>
 
 <style scoped>
-.home { padding-bottom: 3rem; }
+.home {
+  padding-bottom: 3rem;
+}
 
 /* Hero 区域 */
 .hero {
@@ -46,10 +49,20 @@ const posts = ref(mockPosts)
   color: var(--color-accent);
   margin-bottom: 1.5rem;
   opacity: 0.5;
-  animation: heroIn 0.7s ease both, twinkle 3s ease-in-out infinite;
+  animation:
+    heroIn 0.7s ease both,
+    twinkle 3s ease-in-out infinite;
   transition: color 0.4s ease;
 }
-@keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.7; } }
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
 .hero::after {
   content: '';
   display: block;
@@ -76,8 +89,14 @@ const posts = ref(mockPosts)
   animation-delay: 0.15s;
 }
 @keyframes heroIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 最近文章区域 */
@@ -88,8 +107,12 @@ const posts = ref(mockPosts)
   animation-delay: 0.3s;
 }
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 .recent-posts h2 {
   font-size: 1.3rem;
@@ -106,7 +129,11 @@ const posts = ref(mockPosts)
   font-size: 0.9rem;
   color: var(--color-accent);
   position: relative;
-  transition: color 0.25s ease, gap 0.3s ease;
+  transition:
+    color 0.25s ease,
+    gap 0.3s ease;
 }
-.more:hover { gap: 0.6rem; }
+.more:hover {
+  gap: 0.6rem;
+}
 </style>

@@ -3,29 +3,41 @@
     <h1>时间线</h1>
     <p class="page-subtitle">回首来路，每一步都是风景</p>
     <div class="timeline">
-      <TimelineEntry v-for="item in items" :key="item.id" :entry="item" />
+      <TimelineEntry v-for="item in blogStore.timeline" :key="item.id" :entry="item" />
     </div>
-    <EmptyState v-if="!items.length" message="暂无记录" />
+    <EmptyState v-if="!blogStore.timeline.length">暂无记录</EmptyState>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted } from 'vue'
 import TimelineEntry from '../components/TimelineEntry.vue'
 import EmptyState from '../components/EmptyState.vue'
-import { mockTimeline } from '../mock/data'
+import { useBlogStore } from '../stores/blog'
 
-const items = ref(mockTimeline)
+const blogStore = useBlogStore()
+onMounted(() => blogStore.fetchTimeline())
 </script>
 
 <style scoped>
-.timeline-page { padding-bottom: 3rem; }
+.timeline-page {
+  padding-bottom: 3rem;
+}
 .timeline-page h1 {
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
   animation: fadeDown 0.5s ease both;
 }
-@keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .page-subtitle {
   color: var(--color-text-secondary);
   font-size: 0.95rem;
@@ -49,7 +61,12 @@ const items = ref(mockTimeline)
   top: 1rem;
   bottom: 1rem;
   width: 2px;
-  background: linear-gradient(to bottom, var(--color-accent) 0%, var(--color-border) 50%, var(--color-border) 100%);
+  background: linear-gradient(
+    to bottom,
+    var(--color-accent) 0%,
+    var(--color-border) 50%,
+    var(--color-border) 100%
+  );
   border-radius: 1px;
   opacity: 0.4;
   transform: scaleY(0);
@@ -58,13 +75,41 @@ const items = ref(mockTimeline)
   animation-delay: 0.2s;
   transition: background 0.4s ease;
 }
-@keyframes lineGrow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes lineGrow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
 /* 条目 stagger 入场 */
-.timeline :deep(.timeline-entry) { animation: entryIn 0.4s ease both; }
-.timeline :deep(.timeline-entry:nth-child(1)) { animation-delay: 0.35s; }
-.timeline :deep(.timeline-entry:nth-child(2)) { animation-delay: 0.45s; }
-.timeline :deep(.timeline-entry:nth-child(3)) { animation-delay: 0.55s; }
-.timeline :deep(.timeline-entry:nth-child(4)) { animation-delay: 0.65s; }
-.timeline :deep(.timeline-entry:nth-child(5)) { animation-delay: 0.75s; }
-@keyframes entryIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+.timeline :deep(.timeline-entry) {
+  animation: entryIn 0.4s ease both;
+}
+.timeline :deep(.timeline-entry:nth-child(1)) {
+  animation-delay: 0.35s;
+}
+.timeline :deep(.timeline-entry:nth-child(2)) {
+  animation-delay: 0.45s;
+}
+.timeline :deep(.timeline-entry:nth-child(3)) {
+  animation-delay: 0.55s;
+}
+.timeline :deep(.timeline-entry:nth-child(4)) {
+  animation-delay: 0.65s;
+}
+.timeline :deep(.timeline-entry:nth-child(5)) {
+  animation-delay: 0.75s;
+}
+@keyframes entryIn {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 </style>

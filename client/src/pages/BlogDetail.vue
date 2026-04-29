@@ -6,10 +6,12 @@
           <h1>{{ post.title }}</h1>
           <div class="article-meta">
             <span class="meta-item">{{ post.date }}</span>
-            <span class="meta-item" v-if="post.wordCount">约 {{ post.wordCount }} 字</span>
-            <span class="meta-item" v-if="post.readingTime">阅读约 {{ post.readingTime }} 分钟</span>
+            <span v-if="post.wordCount" class="meta-item">约 {{ post.wordCount }} 字</span>
+            <span v-if="post.readingTime" class="meta-item"
+              >阅读约 {{ post.readingTime }} 分钟</span
+            >
           </div>
-          <div class="article-tags" v-if="post.tags?.length">
+          <div v-if="post.tags?.length" class="article-tags">
             <span v-for="tag in post.tags" :key="tag" class="tag">{{ tag }}</span>
           </div>
         </header>
@@ -31,48 +33,59 @@
         </details>
       </section>
 
-      <section class="comments" v-if="post.commentEnabled">
+      <section v-if="post.commentEnabled" class="comments">
         <h2>评论 ({{ commentTree.length }})</h2>
         <CommentList :comments="commentTree" />
         <CommentForm @submit="handleCommentSubmit" />
       </section>
 
-      <section class="comments-disabled" v-else>
+      <section v-else class="comments-disabled">
         <p class="no-comments-hint">本文未开放评论。</p>
       </section>
     </template>
 
-    <NotFound v-else message="文章未找到" />
+    <div v-else class="not-found-inline">
+      <h2>404</h2>
+      <p>文章未找到</p>
+      <router-link to="/blog">返回博客列表</router-link>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useBlogStore } from '../stores/blog'
+import { useToastStore } from '../stores/toast'
 import MarkdownRenderer from '../components/MarkdownRenderer.vue'
 import CommentList from '../components/CommentList.vue'
 import CommentForm from '../components/CommentForm.vue'
-import NotFound from '../components/NotFound.vue'
-import { mockPosts, mockComments } from '../mock/data'
-import type { MockComment } from '../mock/data'
-import type { Comment } from '../types'
+import type { Comment as DisplayComment } from '../types'
+import type { Post, Comment as StoreComment } from '../stores/blog'
 
 const route = useRoute()
+const blogStore = useBlogStore()
+const toast = useToastStore()
 const slug = String(route.params.slug ?? '')
 
-const post = computed(() => mockPosts.find(p => p.slug === slug) || null)
+const post = ref<Post | null>(null)
 
-function buildCommentTree(comments: MockComment[]): Comment[] {
-  const topLevel = comments.filter(c => c.parent_id === null)
-  return topLevel.map(c => ({
+onMounted(async () => {
+  post.value = (await blogStore.getPost(slug)) ?? null
+  blogStore.fetchComments(1)
+})
+
+function buildCommentTree(comments: StoreComment[]): DisplayComment[] {
+  const topLevel = comments.filter((c) => c.parent_id === null)
+  return topLevel.map((c) => ({
     id: String(c.id),
     nickname: c.nickname,
     content: c.content,
     createdAt: c.created_at,
     ipLocation: c.ip_location,
     replies: comments
-      .filter(r => r.parent_id === c.id)
-      .map(r => ({
+      .filter((r) => r.parent_id === c.id)
+      .map((r) => ({
         id: String(r.id),
         nickname: r.nickname,
         content: r.content,
@@ -82,16 +95,19 @@ function buildCommentTree(comments: MockComment[]): Comment[] {
   }))
 }
 
-const commentTree = computed(() => buildCommentTree(mockComments))
+const commentTree = computed(() => buildCommentTree(blogStore.comments))
 
 function handleCommentSubmit(data: { nickname: string; content: string }) {
   // 阶段二接入真实 API
-  alert(`评论已提交（Mock）\n昵称：${data.nickname}\n内容：${data.content}`)
+  toast.success('评论已提交')
 }
 </script>
 
 <style scoped>
-.blog-detail { padding-top: 2rem; padding-bottom: 3rem; }
+.blog-detail {
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+}
 
 /* 文章头部 — 逐级入场 */
 .article-header {
@@ -104,7 +120,8 @@ function handleCommentSubmit(data: { nickname: string; content: string }) {
   letter-spacing: 0.02em;
 }
 .article-meta {
-  display: flex; gap: 1rem;
+  display: flex;
+  gap: 1rem;
   color: var(--color-text-secondary);
   font-size: 0.9rem;
   margin-bottom: 0.75rem;
@@ -112,13 +129,34 @@ function handleCommentSubmit(data: { nickname: string; content: string }) {
   animation-delay: 0.1s;
 }
 .article-tags {
-  display: flex; gap: 0.5rem; flex-wrap: wrap;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
   animation: fadeDown 0.5s ease both;
   animation-delay: 0.2s;
 }
-@keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-.tag { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 0.15rem 0.6rem; font-size: 0.8rem; transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease; }
+.tag {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.15rem 0.6rem;
+  font-size: 0.8rem;
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease,
+    color 0.4s ease;
+}
 
 /* 文章正文 */
 .article-body {
@@ -126,7 +164,14 @@ function handleCommentSubmit(data: { nickname: string; content: string }) {
   animation: fadeIn 0.5s ease both;
   animation-delay: 0.25s;
 }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
 /* AI 摘要 */
 /* 文章与评论区装饰分隔 */
@@ -147,18 +192,47 @@ function handleCommentSubmit(data: { nickname: string; content: string }) {
   animation: fadeDown 0.5s ease both;
   animation-delay: 0.35s;
 }
-.ai-summary details { border: 1px solid var(--color-border); border-radius: var(--radius); padding: 1rem; background: var(--color-surface); transition: background-color 0.4s ease, border-color 0.4s ease; }
-.ai-summary summary { cursor: pointer; user-select: none; }
-.summary-title { font-weight: 600; }
-.summary-hint { color: var(--color-text-secondary); font-size: 0.85rem; }
-.summary-placeholder { margin-top: 0.75rem; color: var(--color-text-secondary); font-size: 0.9rem; }
+.ai-summary details {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  background: var(--color-surface);
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease;
+}
+.ai-summary summary {
+  cursor: pointer;
+  user-select: none;
+}
+.summary-title {
+  font-weight: 600;
+}
+.summary-hint {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}
+.summary-placeholder {
+  margin-top: 0.75rem;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
 
 /* 评论区入场 */
 .comments {
   animation: fadeUp 0.5s ease both;
   animation-delay: 0.4s;
 }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .comments h2 {
   font-size: 1.2rem;
   margin-bottom: 1rem;
@@ -166,5 +240,25 @@ function handleCommentSubmit(data: { nickname: string; content: string }) {
   border-bottom: 1px solid var(--color-border);
   transition: border-color 0.4s ease;
 }
-.no-comments-hint { text-align: center; color: var(--color-text-secondary); padding: 2rem 0; }
+.no-comments-hint {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: 2rem 0;
+}
+.not-found-inline {
+  text-align: center;
+  padding: 5rem 0;
+}
+.not-found-inline h2 {
+  font-size: 2.5rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+.not-found-inline p {
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+}
+.not-found-inline a {
+  color: var(--color-accent);
+}
 </style>

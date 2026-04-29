@@ -38,15 +38,59 @@ const toggleReply = (_id: string) => {
 </script>
 
 <style scoped>
-.comment-list { padding: 1rem 0; }
-.comments { list-style: none; padding: 0; margin: 0; }
-.no-comments { text-align: center; color: var(--color-text-secondary); padding: 2rem 0; }
-.comment-item { padding: 1rem 0; border-bottom: 1px solid var(--color-border); }
-.comment-header { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 0.4rem; font-size: 0.85rem; }
-.comment-nickname { font-weight: 600; color: var(--color-accent); }
-.comment-time, .comment-location { color: var(--color-text-secondary); }
-.comment-content { line-height: 1.6; margin-bottom: 0.5rem; }
-.reply-btn { background: none; border: none; color: var(--color-accent); cursor: pointer; font-size: 0.8rem; padding: 0; font-family: var(--font-sans); }
-.comment-replies { margin-left: 2rem; margin-top: 0.5rem; padding-left: 1rem; border-left: 2px solid var(--color-border); list-style: none; }
-.reply-item { padding: 0.75rem 0; }
+.comment-list {
+  padding: 1rem 0;
+}
+.comments {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.no-comments {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: 2rem 0;
+}
+.comment-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.comment-header {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 0.4rem;
+  font-size: 0.85rem;
+}
+.comment-nickname {
+  font-weight: 600;
+  color: var(--color-accent);
+}
+.comment-time,
+.comment-location {
+  color: var(--color-text-secondary);
+}
+.comment-content {
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+.reply-btn {
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0;
+  font-family: var(--font-sans);
+}
+.comment-replies {
+  margin-left: 2rem;
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--color-border);
+  list-style: none;
+}
+.reply-item {
+  padding: 0.75rem 0;
+}
 </style>

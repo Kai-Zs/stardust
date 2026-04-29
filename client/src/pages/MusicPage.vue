@@ -22,9 +22,9 @@
 
       <section class="playlist-section">
         <Playlist
-          :name="playlist.name"
-          :description="playlist.description"
-          :songs="playlist.songs"
+          :name="blogStore.playlist?.name ?? ''"
+          :description="blogStore.playlist?.description ?? ''"
+          :songs="songs"
           :current-index="currentIndex"
           @select="selectSong"
         />
@@ -36,13 +36,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import PlayerControls from '../components/PlayerControls.vue'
 import Playlist from '../components/Playlist.vue'
-import { mockPlaylist } from '../mock/data'
-import type { Song } from '../types'
+import { useBlogStore } from '../stores/blog'
+import type { PlaylistSong } from '../stores/blog'
 
-const playlist = ref(mockPlaylist)
+const blogStore = useBlogStore()
+onMounted(() => blogStore.fetchPlaylist())
+
+const songs = computed(() => blogStore.playlist?.songs ?? [])
 const currentIndex = ref(-1)
 const playing = ref(false)
 const currentTime = ref(0)
@@ -50,9 +53,9 @@ const duration = ref(240)
 const error = ref(false)
 let progressTimer: number | null = null
 
-const currentSong = computed<Song | null>(() => {
-  if (currentIndex.value < 0 || currentIndex.value >= playlist.value.songs.length) return null
-  return playlist.value.songs[currentIndex.value]
+const currentSong = computed<PlaylistSong | null>(() => {
+  if (currentIndex.value < 0 || currentIndex.value >= songs.value.length) return null
+  return songs.value[currentIndex.value]
 })
 
 const progress = computed(() => {
@@ -79,14 +82,14 @@ function togglePlay() {
 }
 
 function prevSong() {
-  if (playlist.value.songs.length === 0) return
-  const idx = currentIndex.value <= 0 ? playlist.value.songs.length - 1 : currentIndex.value - 1
+  if (songs.value.length === 0) return
+  const idx = currentIndex.value <= 0 ? songs.value.length - 1 : currentIndex.value - 1
   selectSong(idx)
 }
 
 function nextSong() {
-  if (playlist.value.songs.length === 0) return
-  const idx = currentIndex.value >= playlist.value.songs.length - 1 ? 0 : currentIndex.value + 1
+  if (songs.value.length === 0) return
+  const idx = currentIndex.value >= songs.value.length - 1 ? 0 : currentIndex.value + 1
   selectSong(idx)
 }
 
@@ -118,16 +121,60 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.music-page { padding-bottom: 3rem; }
-.page-header { text-align: center; margin-bottom: 2.5rem; animation: fadeDown 0.5s ease both; }
-@keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
-.page-header h1 { font-family: var(--font-serif); font-size: 1.8rem; margin-bottom: 0.4rem; }
-.page-subtitle { color: var(--color-text-secondary); font-size: 0.95rem; font-style: italic; letter-spacing: 0.04em; }
-.music-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
-.player-section { position: sticky; top: 5rem; }
-.error-msg { text-align: center; color: var(--color-error); margin-top: 1.5rem; padding: 1rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); }
+.music-page {
+  padding-bottom: 3rem;
+}
+.page-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  animation: fadeDown 0.5s ease both;
+}
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.page-header h1 {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  margin-bottom: 0.4rem;
+}
+.page-subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
+.music-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+.player-section {
+  position: sticky;
+  top: 5rem;
+}
+.error-msg {
+  text-align: center;
+  color: var(--color-error);
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
 @media (max-width: 768px) {
-  .music-layout { grid-template-columns: 1fr; }
-  .player-section { position: static; }
+  .music-layout {
+    grid-template-columns: 1fr;
+  }
+  .player-section {
+    position: static;
+  }
 }
 </style>

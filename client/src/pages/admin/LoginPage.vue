@@ -1,6 +1,6 @@
 <template>
   <div class="login-page">
-    <form @submit.prevent="login" class="login-form">
+    <form class="login-form" @submit.prevent="login">
       <h2>后台登录</h2>
       <div class="admin-field">
         <label>用户名</label>
@@ -26,9 +26,12 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
+import { useToastStore } from '../../stores/toast'
+import { api } from '../../api'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const toast = useToastStore()
 
 const form = ref({ username: '', password: '', captcha: '' })
 
@@ -36,20 +39,62 @@ function refreshCaptcha() {
   // 阶段二对接真实验证码刷新
 }
 
-function login() {
-  // 阶段二对接真实 API
-  authStore.setToken('mock-token')
-  authStore.setUser({ id: 1, username: form.value.username, nickname: '管理员' })
-  router.push('/admin/dashboard')
+async function login() {
+  try {
+    const res = await api.post<{ token: string; user: { id: number; username: string; nickname: string } }>(
+      '/admin/login',
+      { username: form.value.username, password: form.value.password },
+    )
+    authStore.setToken(res.token)
+    authStore.setUser(res.user)
+    router.push('/admin/dashboard')
+  } catch {
+    toast.error('登录失败，请检查用户名和密码')
+  }
 }
 </script>
 
 <style scoped>
-.login-page { display: flex; align-items: center; justify-content: center; min-height: 80vh; }
-.login-form { width: 100%; max-width: 380px; background: var(--color-surface); padding: 2.5rem; border-radius: var(--radius); border: 1px solid var(--color-border); }
-.login-form h2 { text-align: center; margin-bottom: 1.5rem; }
-.captcha-row { display: flex; gap: 0.75rem; }
-.captcha-row input { flex: 1; }
-.captcha-img { width: 100px; height: 38px; background: var(--color-border); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border-radius: var(--radius); cursor: pointer; user-select: none; }
-.login-btn { width: 100%; margin-top: 0.5rem; font-size: 1rem; }
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+.login-form {
+  width: 100%;
+  max-width: 380px;
+  background: var(--color-surface);
+  padding: 2.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+}
+.login-form h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.captcha-row {
+  display: flex;
+  gap: 0.75rem;
+}
+.captcha-row input {
+  flex: 1;
+}
+.captcha-img {
+  width: 100px;
+  height: 38px;
+  background: var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  user-select: none;
+}
+.login-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
 </style>

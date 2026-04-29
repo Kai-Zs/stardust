@@ -2,7 +2,9 @@
   <aside class="sidebar">
     <h2 class="sidebar-title">星霜记</h2>
     <nav class="sidebar-nav">
-      <router-link v-for="item in menu" :key="item.to" :to="item.to" class="sidebar-link">{{ item.label }}</router-link>
+      <router-link v-for="item in menu" :key="item.to" :to="item.to" class="sidebar-link">{{
+        item.label
+      }}</router-link>
     </nav>
     <div class="sidebar-footer">
       <div class="footer-actions">
@@ -40,7 +42,9 @@ const menu = [
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  transition: background-color 0.4s ease, border-color 0.4s ease;
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease;
 }
 .sidebar-title {
   font-family: var(--font-serif);
@@ -57,7 +61,9 @@ const menu = [
   padding: 0.5rem 0.75rem;
   font-size: 0.95rem;
   border-radius: var(--radius);
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
 }
 .sidebar-link:hover {
   background: var(--color-bg);
@@ -79,6 +85,10 @@ const menu = [
   align-items: center;
   justify-content: space-between;
 }
-.back-link { transition: color var(--transition-fast); }
-.back-link:hover { color: var(--color-accent); }
+.back-link {
+  transition: color var(--transition-fast);
+}
+.back-link:hover {
+  color: var(--color-accent);
+}
 </style>

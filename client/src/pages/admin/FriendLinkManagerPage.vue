@@ -6,7 +6,7 @@
     </div>
 
     <!-- 友链表格 -->
-    <table class="admin-table" v-if="links.length > 0">
+    <table v-if="links.length > 0" class="admin-table">
       <thead>
         <tr>
           <th>名称</th>
@@ -17,8 +17,12 @@
       </thead>
       <tbody>
         <tr v-for="link in links" :key="link.id">
-          <td><strong>{{ link.name }}</strong></td>
-          <td><a :href="link.url" target="_blank">{{ link.url }}</a></td>
+          <td>
+            <strong>{{ link.name }}</strong>
+          </td>
+          <td>
+            <a :href="link.url" target="_blank">{{ link.url }}</a>
+          </td>
           <td class="desc-cell">{{ link.description }}</td>
           <td class="actions">
             <button class="admin-btn-sm" @click="openEdit(link)">编辑</button>
@@ -30,7 +34,7 @@
     <p v-else class="admin-empty">暂无友链</p>
 
     <!-- 弹窗表单 -->
-    <div class="admin-modal-overlay" v-if="showModal" @click.self="closeModal">
+    <div v-if="showModal" class="admin-modal-overlay" @click.self="closeModal">
       <div class="admin-modal">
         <h3>{{ editingId ? '编辑友链' : '新增友链' }}</h3>
         <div class="admin-field">
@@ -55,19 +59,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useBlogStore } from '@/stores/blog'
+import { useToastStore } from '@/stores/toast'
+import { api } from '@/api'
+import type { FriendLink } from '@/stores/blog'
 
-interface FriendLink {
-  id: number
-  name: string
-  url: string
-  description: string
-}
+const blogStore = useBlogStore()
+const toast = useToastStore()
 
-const links = ref<FriendLink[]>([
-  { id: 1, name: '张三的博客', url: 'https://zhangsan.example.com', description: '一个热爱前端的朋友' },
-  { id: 2, name: '后端笔记', url: 'https://backend.example.com', description: '专注后端技术分享' },
-])
+onMounted(() => {
+  blogStore.fetchFriendLinks()
+})
+
+const links = computed(() => blogStore.friendLinks)
 
 const showModal = ref(false)
 const editingId = ref<number | null>(null)
@@ -98,26 +103,40 @@ function closeModal() {
   showModal.value = false
 }
 
-function save() {
-  if (editingId.value) {
-    const idx = links.value.findIndex(l => l.id === editingId.value)
-    if (idx > -1) {
-      links.value[idx] = { ...links.value[idx], name: form.name, url: form.url, description: form.description }
-    }
-  } else {
-    const newId = Math.max(0, ...links.value.map(l => l.id)) + 1
-    links.value.push({ id: newId, name: form.name, url: form.url, description: form.description })
+async function save() {
+  const payload = {
+    name: form.name,
+    url: form.url,
+    description: form.description,
   }
+  if (editingId.value) {
+    await api.put('/friend-links/' + editingId.value, payload)
+  } else {
+    await api.post('/friend-links', payload)
+  }
+  await blogStore.fetchFriendLinks()
   closeModal()
 }
 
-function doDelete(id: number) {
-  links.value = links.value.filter(l => l.id !== id)
+async function doDelete(id: number) {
+  await api.delete('/friend-links/' + id)
+  await blogStore.fetchFriendLinks()
+  toast.success('友链已删除')
 }
 </script>
 
 <style scoped>
-.manager-page { max-width: 960px; margin: 0 auto; }
-.desc-cell { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.actions { white-space: nowrap; }
+.manager-page {
+  max-width: 960px;
+  margin: 0 auto;
+}
+.desc-cell {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.actions {
+  white-space: nowrap;
+}
 </style>

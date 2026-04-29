@@ -5,14 +5,18 @@
       <button class="admin-btn-primary" @click="save">保存设置</button>
     </div>
 
-    <form @submit.prevent="save" class="settings-form">
+    <form class="settings-form" @submit.prevent="save">
       <div class="admin-field">
         <label>站点标题</label>
         <input v-model="form.site_title" type="text" placeholder="星霜记" />
       </div>
       <div class="admin-field">
         <label>站点描述</label>
-        <textarea v-model="form.site_description" rows="2" placeholder="一个记录时光的个人博客"></textarea>
+        <textarea
+          v-model="form.site_description"
+          rows="2"
+          placeholder="一个记录时光的个人博客"
+        ></textarea>
       </div>
       <div class="admin-field">
         <label>关于我</label>
@@ -40,7 +44,11 @@
       </div>
       <div class="admin-field">
         <label>页脚文案</label>
-        <input v-model="form.footer_text" type="text" :placeholder="'© ' + new Date().getFullYear() + ' 星霜记'" />
+        <input
+          v-model="form.footer_text"
+          type="text"
+          :placeholder="'© ' + new Date().getFullYear() + ' 星霜记'"
+        />
       </div>
       <div class="admin-field">
         <label>每页文章数</label>
@@ -48,16 +56,17 @@
       </div>
     </form>
 
-    <!-- 保存提示 -->
-    <div v-if="saveMsg" class="toast">{{ saveMsg }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { useSiteStore } from '../../stores/site'
+import { useToastStore } from '../../stores/toast'
+import { api } from '../../api'
 
 const siteStore = useSiteStore()
+const toast = useToastStore()
 
 const form = reactive({
   site_title: '星霜记',
@@ -71,22 +80,45 @@ const form = reactive({
   page_size: 10,
 })
 
-const saveMsg = ref('')
-
-function save() {
-  // 阶段二对接真实 API
+async function save() {
   const data: Record<string, string> = {}
   for (const [key, value] of Object.entries(form)) {
     data[key] = String(value)
   }
-  siteStore.setConfig(data)
-  saveMsg.value = '设置已保存'
-  setTimeout(() => { saveMsg.value = '' }, 2000)
+  try {
+    await api.put('/settings', data)
+    siteStore.setConfig(data)
+    toast.success('设置已保存')
+  } catch {
+    toast.error('保存失败，请检查网络或服务端状态')
+  }
 }
+
+async function loadSettings() {
+  try {
+    const data = await api.get<Record<string, string>>('/settings')
+    if (data) {
+      for (const [key, value] of Object.entries(data)) {
+        if (key in form) {
+          ;(form as Record<string, unknown>)[key] =
+            key === 'page_size' ? Number(value) : value
+        }
+      }
+      siteStore.setConfig(data)
+    }
+  } catch {
+    // 接口未实现时使用默认值
+  }
+}
+
+onMounted(loadSettings)
 </script>
 
 <style scoped>
-.settings-page { max-width: 720px; margin: 0 auto; }
+.settings-page {
+  max-width: 720px;
+  margin: 0 auto;
+}
 
 .settings-form {
   background: var(--color-surface);
@@ -95,25 +127,25 @@ function save() {
   padding: 1.5rem;
 }
 
-.field-row { display: flex; gap: 1rem; margin-bottom: 1.2rem; }
-.field-row:last-of-type { margin-bottom: 1.2rem; }
-.flex-1 { flex: 1; }
-
-.toast {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--color-text);
-  color: var(--color-bg);
-  padding: 0.5rem 1.25rem;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  z-index: 200;
+.field-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+.field-row:last-of-type {
+  margin-bottom: 1.2rem;
+}
+.flex-1 {
+  flex: 1;
 }
 
 @media (max-width: 600px) {
-  .field-row { flex-direction: column; gap: 0; }
-  .field-row .admin-field { margin-bottom: 1.2rem; }
+  .field-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .field-row .admin-field {
+    margin-bottom: 1.2rem;
+  }
 }
 </style>

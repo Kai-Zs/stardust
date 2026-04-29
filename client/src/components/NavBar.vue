@@ -9,8 +9,8 @@
       <button
         class="menu-toggle"
         :class="{ active: menuOpen }"
-        @click="menuOpen = !menuOpen"
         aria-label="菜单"
+        @click="menuOpen = !menuOpen"
       >
         <span></span><span></span><span></span>
       </button>
@@ -66,7 +66,9 @@ const menuOpen = ref(false)
   color: var(--color-text);
   letter-spacing: 0.04em;
 }
-.logo:hover { text-decoration: none; }
+.logo:hover {
+  text-decoration: none;
+}
 .logo-deco {
   font-size: 0.7em;
   color: var(--color-accent);
@@ -75,8 +77,15 @@ const menuOpen = ref(false)
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.4; transform: scale(0.9); }
-  50% { opacity: 0.8; transform: scale(1.1); }
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
 }
 
 /* Nav links */
@@ -102,8 +111,13 @@ const menuOpen = ref(false)
   transform: translateX(-50%);
   transition: width 0.25s ease;
 }
-.nav-links a:hover { color: var(--color-accent); text-decoration: none; }
-.nav-links a:hover::after { width: 100%; }
+.nav-links a:hover {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+.nav-links a:hover::after {
+  width: 100%;
+}
 .nav-links a.router-link-exact-active {
   color: var(--color-accent);
   font-weight: 600;
@@ -128,14 +142,25 @@ const menuOpen = ref(false)
   height: 2px;
   background: var(--color-text);
   border-radius: 1px;
-  transition: transform 0.3s ease, opacity 0.2s ease, background-color 0.4s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.2s ease,
+    background-color 0.4s ease;
 }
-.menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.menu-toggle.active span:nth-child(2) { opacity: 0; }
-.menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.menu-toggle.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+.menu-toggle.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
 
 @media (max-width: 640px) {
-  .menu-toggle { display: flex; }
+  .menu-toggle {
+    display: flex;
+  }
   .nav-links {
     position: absolute;
     top: 100%;
@@ -150,7 +175,9 @@ const menuOpen = ref(false)
     border-bottom: 1px solid var(--color-border);
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.35s ease, padding 0.35s ease;
+    transition:
+      max-height 0.35s ease,
+      padding 0.35s ease;
     padding: 0 1.25rem;
   }
   .nav-links.open {
@@ -161,7 +188,11 @@ const menuOpen = ref(false)
     padding: 0.65rem 0;
     font-size: 1rem;
   }
-  .nav-links a::after { bottom: 2px; }
-  .navbar { position: relative; }
+  .nav-links a::after {
+    bottom: 2px;
+  }
+  .navbar {
+    position: relative;
+  }
 }
 </style>

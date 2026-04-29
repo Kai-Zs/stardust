@@ -4,8 +4,14 @@
 
 /* 入场动画 */
 @keyframes adminSlideIn {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .admin-fade-in {
@@ -50,7 +56,10 @@
   color: var(--color-text);
   font-size: 0.9rem;
   outline: none;
-  transition: border-color 0.25s ease, background-color 0.4s ease, color 0.4s ease;
+  transition:
+    border-color 0.25s ease,
+    background-color 0.4s ease,
+    color 0.4s ease;
 }
 .admin-search-input::placeholder {
   color: var(--color-text-secondary);
@@ -78,7 +87,10 @@
   color: var(--color-text);
   cursor: pointer;
   font-size: 0.85rem;
-  transition: border-color 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+  transition:
+    border-color 0.25s ease,
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 .admin-filter-btn:hover {
   border-color: var(--color-accent);
@@ -104,7 +116,9 @@
   border: 1px solid var(--color-border);
   animation: adminSlideIn 0.4s ease both;
   animation-delay: 0.15s;
-  transition: background-color 0.4s ease, border-color 0.4s ease;
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease;
 }
 .admin-table th,
 .admin-table td {
@@ -149,9 +163,13 @@
   border-radius: var(--radius);
   cursor: pointer;
   font-size: 0.9rem;
-  transition: filter var(--transition-fast), background-color 0.4s ease;
+  transition:
+    filter var(--transition-fast),
+    background-color 0.4s ease;
 }
-.admin-btn-primary:hover { filter: brightness(0.9); }
+.admin-btn-primary:hover {
+  filter: brightness(0.9);
+}
 
 .admin-btn-secondary {
   padding: 0.5rem 1.25rem;
@@ -161,9 +179,14 @@
   cursor: pointer;
   color: var(--color-text);
   font-size: 0.9rem;
-  transition: background-color 0.25s ease, border-color 0.4s ease, color 0.4s ease;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.4s ease,
+    color 0.4s ease;
 }
-.admin-btn-secondary:hover { background: var(--color-surface); }
+.admin-btn-secondary:hover {
+  background: var(--color-surface);
+}
 
 .admin-btn-sm {
   padding: 0.2rem 0.6rem;
@@ -174,9 +197,14 @@
   font-size: 0.8rem;
   margin-right: 0.3rem;
   color: var(--color-text);
-  transition: border-color 0.25s ease, background-color 0.25s ease, color 0.4s ease;
+  transition:
+    border-color 0.25s ease,
+    background-color 0.25s ease,
+    color 0.4s ease;
 }
-.admin-btn-sm:hover { background: var(--color-bg); }
+.admin-btn-sm:hover {
+  background: var(--color-bg);
+}
 
 .admin-btn-danger {
   color: var(--color-danger);
@@ -223,9 +251,13 @@
   width: 90%;
   border: 1px solid var(--color-border);
   animation: adminSlideIn 0.3s ease both;
-  transition: background-color 0.4s ease, border-color 0.4s ease;
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease;
 }
-.admin-modal h3 { margin-bottom: 1rem; }
+.admin-modal h3 {
+  margin-bottom: 1rem;
+}
 
 .admin-field {
   margin-bottom: 1rem;
@@ -236,11 +268,11 @@
   font-size: 0.85rem;
   color: var(--color-text-secondary);
 }
-.admin-field input[type="text"],
-.admin-field input[type="url"],
-.admin-field input[type="email"],
-.admin-field input[type="date"],
-.admin-field input[type="number"],
+.admin-field input[type='text'],
+.admin-field input[type='url'],
+.admin-field input[type='email'],
+.admin-field input[type='date'],
+.admin-field input[type='number'],
 .admin-field textarea,
 .admin-field select {
   width: 100%;
@@ -251,7 +283,10 @@
   background: var(--color-bg);
   color: var(--color-text);
   outline: none;
-  transition: border-color 0.25s ease, background-color 0.4s ease, color 0.4s ease;
+  transition:
+    border-color 0.25s ease,
+    background-color 0.4s ease,
+    color 0.4s ease;
 }
 .admin-field input:focus,
 .admin-field textarea:focus,
@@ -299,10 +334,17 @@
   color: var(--color-text);
   cursor: pointer;
   font-size: 0.85rem;
-  transition: background-color 0.25s ease, border-color 0.4s ease;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.4s ease;
 }
-.admin-page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.admin-page-btn:not(:disabled):hover { background: var(--color-bg); }
+.admin-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.admin-page-btn:not(:disabled):hover {
+  background: var(--color-bg);
+}
 .admin-page-info {
   font-size: 0.9rem;
   color: var(--color-text-secondary);
@@ -319,11 +361,18 @@
   border-radius: 4px;
   font-size: 0.8rem;
   color: var(--color-text-secondary);
-  transition: background-color 0.4s ease, color 0.4s ease;
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
 }
 
 /* 响应式 */
 @media (max-width: 768px) {
-  .admin-page-header { flex-direction: column; align-items: flex-start; }
-  .admin-search-input { max-width: 100%; }
+  .admin-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .admin-search-input {
+    max-width: 100%;
+  }
 }

@@ -5,7 +5,7 @@
         ref="fileInput"
         type="file"
         accept="image/*"
-        style="display:none"
+        style="display: none"
         @change="handleFileChange"
       />
       <div v-if="!previewUrl" class="upload-placeholder">
@@ -14,12 +14,7 @@
       </div>
       <img v-else :src="previewUrl" class="preview" alt="预览" />
     </div>
-    <button
-      v-if="selectedFile"
-      class="upload-btn"
-      :disabled="uploading"
-      @click="handleUpload"
-    >
+    <button v-if="selectedFile" class="upload-btn" :disabled="uploading" @click="handleUpload">
       {{ uploading ? '上传中...' : '上传图片' }}
     </button>
   </div>
@@ -57,11 +52,47 @@ function handleUpload() {
 </script>
 
 <style scoped>
-.image-uploader { display: flex; flex-direction: column; gap: 1rem; }
-.upload-area { border: 2px dashed var(--color-border); border-radius: var(--radius); min-height: 160px; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; }
-.upload-placeholder { text-align: center; color: var(--color-text-secondary); }
-.upload-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
-.preview { max-width: 100%; max-height: 300px; object-fit: contain; }
-.upload-btn { padding: 0.5rem 1.5rem; border: none; border-radius: var(--radius); background: var(--color-accent); color: var(--color-on-accent); cursor: pointer; font-family: var(--font-sans); align-self: flex-start; }
-.upload-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.image-uploader {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.upload-area {
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius);
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+.upload-placeholder {
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+.upload-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.preview {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+}
+.upload-btn {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  align-self: flex-start;
+}
+.upload-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 </style>

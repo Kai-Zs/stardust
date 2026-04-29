@@ -36,7 +36,7 @@
       </div>
       <div class="admin-field-inline">
         <label>
-          <input type="checkbox" v-model="form.allowComment" />
+          <input v-model="form.allowComment" type="checkbox" />
           允许评论
         </label>
       </div>
@@ -55,14 +55,14 @@
       <div class="pane pane-preview">
         <div class="pane-header">实时预览</div>
         <div class="preview-content">
-          <div v-if="form.content" v-html="renderedMarkdown"></div>
+          <MarkdownRenderer v-if="form.content" :content="form.content" />
           <p v-else class="preview-placeholder">预览区域...</p>
         </div>
       </div>
     </div>
 
     <!-- 保存提示 -->
-    <div class="save-indicator" v-if="saveStatus">
+    <div v-if="saveStatus" class="save-indicator">
       {{ saveStatus }}
     </div>
   </div>
@@ -71,9 +71,14 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAdminStore } from '../../stores/blog'
+import { useToastStore } from '../../stores/toast'
+import MarkdownRenderer from '../../components/MarkdownRenderer.vue'
 
 const route = useRoute()
 const router = useRouter()
+const adminStore = useAdminStore()
+const toast = useToastStore()
 
 const isEdit = computed(() => !!route.params.id)
 
@@ -89,21 +94,6 @@ const form = reactive({
 
 const saveStatus = ref('')
 
-// 简易 Markdown 渲染（阶段二将使用 MarkdownRenderer）
-const renderedMarkdown = computed(() => {
-  if (!form.content) return ''
-  let html = form.content
-    .replace(/### (.+)/g, '<h3>$1</h3>')
-    .replace(/## (.+)/g, '<h2>$1</h2>')
-    .replace(/# (.+)/g, '<h1>$1</h1>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>')
-    .replace(/\n/g, '<br>')
-  return html
-})
-
 // localStorage 自动保存
 const SAVE_KEY = 'post-editor-draft'
 let saveTimer: ReturnType<typeof setInterval> | null = null
@@ -115,15 +105,21 @@ function loadDraft() {
       const data = JSON.parse(raw)
       Object.assign(form, data)
       saveStatus.value = '已恢复上次草稿'
-      setTimeout(() => { saveStatus.value = '' }, 2000)
-    } catch { /* ignore */ }
+      setTimeout(() => {
+        saveStatus.value = ''
+      }, 2000)
+    } catch {
+      /* ignore */
+    }
   }
 }
 
 function saveToDraft() {
   localStorage.setItem(SAVE_KEY, JSON.stringify({ ...form }))
   saveStatus.value = '草稿已保存'
-  setTimeout(() => { saveStatus.value = '' }, 1500)
+  setTimeout(() => {
+    saveStatus.value = ''
+  }, 1500)
 }
 
 function startAutoSave() {
@@ -160,18 +156,48 @@ function saveDraft() {
   saveToDraft()
 }
 
-function publish() {
-  // 阶段二对接真实 API
-  localStorage.removeItem(SAVE_KEY)
-  stopAutoSave()
-  window.removeEventListener('beforeunload', beforeUnload)
-  router.push('/admin/posts')
+async function publish() {
+  const tags = form.tagsInput
+    .split(',')
+    .map((t) => t.trim())
+    .filter(Boolean)
+  const data = {
+    title: form.title,
+    excerpt: form.summary,
+    tags,
+    content: form.content,
+    commentEnabled: form.allowComment,
+    pinned: false,
+  }
+
+  let result
+  if (isEdit.value) {
+    result = await adminStore.updatePost(route.params.id as string, data)
+  } else {
+    result = await adminStore.createPost(data)
+  }
+
+  if (result) {
+    toast.success('文章已发布')
+    localStorage.removeItem(SAVE_KEY)
+    stopAutoSave()
+    window.removeEventListener('beforeunload', beforeUnload)
+    router.push('/admin/posts')
+  } else {
+    toast.error('发布失败，请重试')
+  }
 }
 </script>
 
 <style scoped>
-.editor-page { max-width: 1200px; margin: 0 auto; }
-.header-actions { display: flex; gap: 0.75rem; }
+.editor-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
 
 .meta-form {
   background: var(--color-surface);
@@ -181,12 +207,32 @@ function publish() {
   margin-bottom: 1rem;
 }
 
-.field-row { display: flex; gap: 1rem; margin-bottom: 1rem; }
-.field-row:last-of-type { margin-bottom: 1rem; }
-.flex-1 { flex: 1; }
+.field-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.field-row:last-of-type {
+  margin-bottom: 1rem;
+}
+.flex-1 {
+  flex: 1;
+}
 
-.editor-area { display: flex; gap: 1rem; height: 55vh; }
-.pane { flex: 1; display: flex; flex-direction: column; border: 1px solid var(--color-border); border-radius: var(--radius); overflow: hidden; background: var(--color-surface); }
+.editor-area {
+  display: flex;
+  gap: 1rem;
+  height: 55vh;
+}
+.pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--color-surface);
+}
 .pane-header {
   padding: 0.5rem 1rem;
   background: var(--color-bg);
@@ -212,7 +258,10 @@ function publish() {
   overflow-y: auto;
   line-height: 1.75;
 }
-.preview-placeholder { color: var(--color-text-secondary); font-style: italic; }
+.preview-placeholder {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
 
 .save-indicator {
   position: fixed;
@@ -229,8 +278,16 @@ function publish() {
 }
 
 @media (max-width: 768px) {
-  .field-row { flex-direction: column; gap: 0; }
-  .editor-area { flex-direction: column; height: auto; }
-  .pane { min-height: 40vh; }
+  .field-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .editor-area {
+    flex-direction: column;
+    height: auto;
+  }
+  .pane {
+    min-height: 40vh;
+  }
 }
 </style>

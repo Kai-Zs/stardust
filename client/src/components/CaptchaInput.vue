@@ -18,7 +18,23 @@ const captcha = ref('')
 </script>
 
 <style scoped>
-.captcha-input { display: flex; gap: 0.5rem; align-items: center; }
-.captcha-field { flex: 1; padding: 0.5rem 0.8rem; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); font-size: 0.9rem; }
-.captcha-hint { font-size: 0.75rem; color: var(--color-text-secondary); }
+.captcha-input {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.captcha-field {
+  flex: 1;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+}
+.captcha-hint {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
 </style>

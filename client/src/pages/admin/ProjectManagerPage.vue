@@ -10,11 +10,16 @@
 
     <!-- 搜索 -->
     <div class="admin-search-bar">
-      <input v-model="keyword" class="admin-search-input" type="text" placeholder="搜索项目名称、描述或技术栈…" />
+      <input
+        v-model="keyword"
+        class="admin-search-input"
+        type="text"
+        placeholder="搜索项目名称、描述或技术栈…"
+      />
     </div>
 
     <!-- 项目表格 -->
-    <table class="admin-table" v-if="filteredProjects.length > 0">
+    <table v-if="filteredProjects.length > 0" class="admin-table">
       <thead>
         <tr>
           <th>项目名称</th>
@@ -34,7 +39,9 @@
             </div>
           </td>
           <td class="desc-cell">{{ p.description }}</td>
-          <td><span class="admin-tag-item" v-for="t in p.techStack" :key="t">{{ t }}</span></td>
+          <td>
+            <span v-for="t in p.techStack" :key="t" class="admin-tag-item">{{ t }}</span>
+          </td>
           <td><span v-if="p.featured" class="featured-star">★</span><span v-else>—</span></td>
           <td class="actions">
             <button class="admin-btn-sm" @click="openEdit(p)">编辑</button>
@@ -46,7 +53,7 @@
     <p v-else class="admin-empty">暂无匹配的项目</p>
 
     <!-- 弹窗表单 -->
-    <div class="admin-modal-overlay" v-if="showModal" @click.self="closeModal">
+    <div v-if="showModal" class="admin-modal-overlay" @click.self="closeModal">
       <div class="admin-modal">
         <h3>{{ editingId ? '编辑项目' : '新增项目' }}</h3>
         <div class="admin-field">
@@ -71,7 +78,7 @@
         </div>
         <div class="admin-field-inline">
           <label>
-            <input type="checkbox" v-model="form.featured" />
+            <input v-model="form.featured" type="checkbox" />
             设为精选
           </label>
         </div>
@@ -85,9 +92,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useBlogStore } from '@/stores/blog'
+import { useToastStore } from '@/stores/toast'
+import { api } from '@/api'
 
-interface Project {
+interface ProjectVm {
   id: number
   name: string
   description: string
@@ -97,20 +107,36 @@ interface Project {
   featured: boolean
 }
 
-const projects = ref<Project[]>([
-  { id: 1, name: '星霜记', description: '个人博客系统', techStack: ['Vue3', 'Hono', 'TypeScript'], githubUrl: 'https://github.com/example/stardust', homeUrl: 'https://stardust.example.com', featured: true },
-  { id: 2, name: 'Todo App', description: '全栈待办应用', techStack: ['React', 'Express'], githubUrl: 'https://github.com/example/todo', homeUrl: '', featured: false },
-])
+const blogStore = useBlogStore()
+const toast = useToastStore()
+
+onMounted(() => {
+  blogStore.fetchProjects()
+})
+
+/** 将 store 的 snake_case Project 映射为页面使用的 camelCase */
+const projects = computed<ProjectVm[]>(() =>
+  blogStore.projects.map((p) => ({
+    id: p.id,
+    name: p.name,
+    description: p.description,
+    techStack: p.tech_stack,
+    githubUrl: p.github_url ?? '',
+    homeUrl: p.homepage_url ?? '',
+    featured: p.featured,
+  })),
+)
 
 const keyword = ref('')
 
 const filteredProjects = computed(() => {
   if (!keyword.value.trim()) return projects.value
   const kw = keyword.value.trim().toLowerCase()
-  return projects.value.filter(p =>
-    p.name.toLowerCase().includes(kw) ||
-    p.description.toLowerCase().includes(kw) ||
-    p.techStack.some(t => t.toLowerCase().includes(kw)),
+  return projects.value.filter(
+    (p) =>
+      p.name.toLowerCase().includes(kw) ||
+      p.description.toLowerCase().includes(kw) ||
+      p.techStack.some((t) => t.toLowerCase().includes(kw)),
   )
 })
 
@@ -134,7 +160,7 @@ function openCreate() {
   showModal.value = true
 }
 
-function openEdit(p: Project) {
+function openEdit(p: ProjectVm) {
   editingId.value = p.id
   form.name = p.name
   form.description = p.description
@@ -149,47 +175,61 @@ function closeModal() {
   showModal.value = false
 }
 
-function save() {
-  const techStack = form.techStackInput.split(',').map(s => s.trim()).filter(Boolean)
-  if (editingId.value) {
-    const idx = projects.value.findIndex(p => p.id === editingId.value)
-    if (idx > -1) {
-      projects.value[idx] = {
-        ...projects.value[idx],
-        name: form.name,
-        description: form.description,
-        techStack,
-        githubUrl: form.githubUrl,
-        homeUrl: form.homeUrl,
-        featured: form.featured,
-      }
-    }
-  } else {
-    const newId = Math.max(0, ...projects.value.map(p => p.id)) + 1
-    projects.value.push({
-      id: newId,
-      name: form.name,
-      description: form.description,
-      techStack,
-      githubUrl: form.githubUrl,
-      homeUrl: form.homeUrl,
-      featured: form.featured,
-    })
+async function save() {
+  const tech_stack = form.techStackInput
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  const payload = {
+    name: form.name,
+    description: form.description,
+    tech_stack,
+    github_url: form.githubUrl || null,
+    homepage_url: form.homeUrl || null,
+    featured: form.featured,
   }
+  if (editingId.value) {
+    await api.put('/projects/' + editingId.value, payload)
+  } else {
+    await api.post('/projects', payload)
+  }
+  await blogStore.fetchProjects()
   closeModal()
 }
 
-function doDelete(id: number) {
-  projects.value = projects.value.filter(p => p.id !== id)
+async function doDelete(id: number) {
+  await api.delete('/projects/' + id)
+  await blogStore.fetchProjects()
+  toast.success('项目已删除')
 }
 </script>
 
 <style scoped>
-.manager-page { max-width: 960px; margin: 0 auto; }
-.name-cell strong { display: block; }
-.links { margin-top: 0.2rem; }
-.links a { font-size: 0.8rem; margin-right: 0.5rem; }
-.desc-cell { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.featured-star { color: var(--color-accent); font-size: 1.1rem; }
-.actions { white-space: nowrap; }
+.manager-page {
+  max-width: 960px;
+  margin: 0 auto;
+}
+.name-cell strong {
+  display: block;
+}
+.links {
+  margin-top: 0.2rem;
+}
+.links a {
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
+}
+.desc-cell {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.featured-star {
+  color: var(--color-accent);
+  font-size: 1.1rem;
+}
+.actions {
+  white-space: nowrap;
+}
 </style>

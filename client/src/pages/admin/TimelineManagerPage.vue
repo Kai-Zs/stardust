@@ -6,7 +6,7 @@
     </div>
 
     <!-- 时间线表格 -->
-    <table class="admin-table" v-if="items.length > 0">
+    <table v-if="items.length > 0" class="admin-table">
       <thead>
         <tr>
           <th>标题</th>
@@ -18,7 +18,9 @@
       </thead>
       <tbody>
         <tr v-for="item in items" :key="item.id">
-          <td><strong>{{ item.title }}</strong></td>
+          <td>
+            <strong>{{ item.title }}</strong>
+          </td>
           <td class="desc-cell">{{ item.description }}</td>
           <td>{{ item.date }}</td>
           <td>{{ item.icon }}</td>
@@ -32,7 +34,7 @@
     <p v-else class="admin-empty">暂无时间线条目</p>
 
     <!-- 弹窗表单 -->
-    <div class="admin-modal-overlay" v-if="showModal" @click.self="closeModal">
+    <div v-if="showModal" class="admin-modal-overlay" @click.self="closeModal">
       <div class="admin-modal">
         <h3>{{ editingId ? '编辑条目' : '新增条目' }}</h3>
         <div class="admin-field">
@@ -61,21 +63,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useBlogStore } from '@/stores/blog'
+import { useToastStore } from '@/stores/toast'
+import { api } from '@/api'
+import type { TimelineItem } from '@/stores/blog'
 
-interface TimelineItem {
-  id: number
-  title: string
-  description: string
-  date: string
-  icon: string
-}
+const blogStore = useBlogStore()
+const toast = useToastStore()
 
-const items = ref<TimelineItem[]>([
-  { id: 1, title: '开始学习前端', description: '从 HTML/CSS 入门，开启编程之旅', date: '2019-09-01', icon: '🎓' },
-  { id: 2, title: '第一份实习', description: '在某互联网公司担任前端实习生', date: '2022-06-01', icon: '💼' },
-  { id: 3, title: '毕业', description: '顺利完成大学学业', date: '2023-07-01', icon: '🎉' },
-])
+onMounted(() => {
+  blogStore.fetchTimeline()
+})
+
+const items = computed(() => blogStore.timeline)
 
 const showModal = ref(false)
 const editingId = ref<number | null>(null)
@@ -108,26 +109,41 @@ function closeModal() {
   showModal.value = false
 }
 
-function save() {
-  if (editingId.value) {
-    const idx = items.value.findIndex(i => i.id === editingId.value)
-    if (idx > -1) {
-      items.value[idx] = { ...items.value[idx], title: form.title, description: form.description, date: form.date, icon: form.icon }
-    }
-  } else {
-    const newId = Math.max(0, ...items.value.map(i => i.id)) + 1
-    items.value.push({ id: newId, title: form.title, description: form.description, date: form.date, icon: form.icon })
+async function save() {
+  const payload = {
+    title: form.title,
+    description: form.description,
+    date: form.date,
+    icon: form.icon,
   }
+  if (editingId.value) {
+    await api.put('/timeline/' + editingId.value, payload)
+  } else {
+    await api.post('/timeline', payload)
+  }
+  await blogStore.fetchTimeline()
   closeModal()
 }
 
-function doDelete(id: number) {
-  items.value = items.value.filter(i => i.id !== id)
+async function doDelete(id: number) {
+  await api.delete('/timeline/' + id)
+  await blogStore.fetchTimeline()
+  toast.success('时间线条目已删除')
 }
 </script>
 
 <style scoped>
-.manager-page { max-width: 960px; margin: 0 auto; }
-.desc-cell { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.actions { white-space: nowrap; }
+.manager-page {
+  max-width: 960px;
+  margin: 0 auto;
+}
+.desc-cell {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.actions {
+  white-space: nowrap;
+}
 </style>

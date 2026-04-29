@@ -3,7 +3,7 @@
     <h1>项目</h1>
     <p class="page-subtitle">代码是另一种诗歌</p>
 
-    <section class="featured-projects" v-if="featuredProjects.length">
+    <section v-if="featuredProjects.length" class="featured-projects">
       <h2>精选项目</h2>
       <div class="project-grid">
         <ProjectCard
@@ -14,7 +14,7 @@
       </div>
     </section>
 
-    <section class="all-projects" v-if="regularProjects.length">
+    <section v-if="regularProjects.length" class="all-projects">
       <h2 v-if="featuredProjects.length">其他项目</h2>
       <h2 v-else>全部项目</h2>
       <div class="project-grid">
@@ -26,29 +26,21 @@
       </div>
     </section>
 
-    <EmptyState v-if="!projects.length" message="暂无项目" />
+    <EmptyState v-if="!blogStore.projects.length">暂无项目</EmptyState>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import ProjectCard from '../components/ProjectCard.vue'
 import EmptyState from '../components/EmptyState.vue'
-import { mockProjects } from '../mock/data'
+import { useBlogStore } from '../stores/blog'
+import type { Project } from '../stores/blog'
 
-const projects = ref(mockProjects)
+const blogStore = useBlogStore()
+onMounted(() => blogStore.fetchProjects())
 
-interface MockProject {
-  id: number
-  name: string
-  description: string
-  tech_stack: string[]
-  github_url: string | null
-  homepage_url: string | null
-  featured: boolean
-}
-
-function toComponentProp(p: MockProject) {
+function toComponentProp(p: Project) {
   return {
     name: p.name,
     description: p.description,
@@ -58,18 +50,29 @@ function toComponentProp(p: MockProject) {
   }
 }
 
-const featuredProjects = computed(() => projects.value.filter(p => p.featured))
-const regularProjects = computed(() => projects.value.filter(p => !p.featured))
+const featuredProjects = computed(() => blogStore.projects.filter((p) => p.featured))
+const regularProjects = computed(() => blogStore.projects.filter((p) => !p.featured))
 </script>
 
 <style scoped>
-.projects-page { padding-bottom: 3rem; }
+.projects-page {
+  padding-bottom: 3rem;
+}
 .projects-page h1 {
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
   animation: fadeDown 0.5s ease both;
 }
-@keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .page-subtitle {
   color: var(--color-text-secondary);
   font-size: 0.95rem;
@@ -90,8 +93,16 @@ const regularProjects = computed(() => projects.value.filter(p => !p.featured))
   animation: fadeIn 0.5s ease both;
   animation-delay: 0.2s;
 }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.featured-projects h2, .all-projects h2 {
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.featured-projects h2,
+.all-projects h2 {
   font-size: 1.2rem;
   margin-bottom: 1rem;
   color: var(--color-text-secondary);
@@ -102,10 +113,29 @@ const regularProjects = computed(() => projects.value.filter(p => !p.featured))
   gap: 1rem;
 }
 /* 卡片 stagger 入场 */
-.project-grid :deep(.project-card) { animation: cardIn 0.4s ease both; }
-.project-grid :deep(.project-card:nth-child(1)) { animation-delay: 0.15s; }
-.project-grid :deep(.project-card:nth-child(2)) { animation-delay: 0.22s; }
-.project-grid :deep(.project-card:nth-child(3)) { animation-delay: 0.29s; }
-.project-grid :deep(.project-card:nth-child(4)) { animation-delay: 0.36s; }
-@keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.project-grid :deep(.project-card) {
+  animation: cardIn 0.4s ease both;
+}
+.project-grid :deep(.project-card:nth-child(1)) {
+  animation-delay: 0.15s;
+}
+.project-grid :deep(.project-card:nth-child(2)) {
+  animation-delay: 0.22s;
+}
+.project-grid :deep(.project-card:nth-child(3)) {
+  animation-delay: 0.29s;
+}
+.project-grid :deep(.project-card:nth-child(4)) {
+  animation-delay: 0.36s;
+}
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 </style>

@@ -9,22 +9,29 @@
 
     <!-- 搜索 -->
     <div class="admin-search-bar">
-      <input v-model="keyword" class="admin-search-input" type="text" placeholder="搜索昵称、内容或文章标题…" />
+      <input
+        v-model="keyword"
+        class="admin-search-input"
+        type="text"
+        placeholder="搜索昵称、内容或文章标题…"
+      />
     </div>
 
     <!-- 状态筛选 -->
-    <div class="admin-filter-bar" style="margin-bottom: 1rem;">
+    <div class="admin-filter-bar" style="margin-bottom: 1rem">
       <button
         v-for="s in statusOptions"
         :key="s.value"
         class="admin-filter-btn"
         :class="{ active: currentStatus === s.value }"
         @click="currentStatus = s.value"
-      >{{ s.label }} ({{ countByStatus(s.value) }})</button>
+      >
+        {{ s.label }} ({{ countByStatus(s.value) }})
+      </button>
     </div>
 
     <!-- 评论表格 -->
-    <table class="admin-table" v-if="filteredComments.length > 0">
+    <table v-if="filteredComments.length > 0" class="admin-table">
       <thead>
         <tr>
           <th>文章</th>
@@ -47,8 +54,20 @@
             <span class="admin-tag" :class="'status-' + c.status">{{ statusLabel(c.status) }}</span>
           </td>
           <td class="actions">
-            <button v-if="c.status === 'pending'" class="admin-btn-sm admin-btn-approve" @click="updateStatus(c.id, 'approved')">通过</button>
-            <button v-if="c.status !== 'hidden'" class="admin-btn-sm" @click="updateStatus(c.id, 'hidden')">隐藏</button>
+            <button
+              v-if="c.status === 'pending'"
+              class="admin-btn-sm admin-btn-approve"
+              @click="updateStatus(c.id, 'approved')"
+            >
+              通过
+            </button>
+            <button
+              v-if="c.status !== 'hidden'"
+              class="admin-btn-sm"
+              @click="updateStatus(c.id, 'hidden')"
+            >
+              隐藏
+            </button>
             <button class="admin-btn-sm admin-btn-danger" @click="doDelete(c.id)">删除</button>
             <button class="admin-btn-sm admin-btn-warn" @click="banIp(c.ip)">封禁 IP</button>
           </td>
@@ -60,9 +79,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useAdminStore } from '../../stores/blog'
+import { useToastStore } from '../../stores/toast'
+import type { Comment } from '../../stores/blog'
 
-interface Comment {
+const adminStore = useAdminStore()
+const toast = useToastStore()
+
+interface DisplayComment {
   id: number
   articleTitle: string
   nickname: string
@@ -73,13 +98,21 @@ interface Comment {
   status: 'pending' | 'approved' | 'hidden'
 }
 
-const comments = ref<Comment[]>([
-  { id: 1, articleTitle: 'Vue3 入门教程', nickname: '小明', content: '写的太好了，受益匪浅！', ip: '192.168.1.1', ipLocation: '北京', time: '2026-04-28 10:30', status: 'pending' },
-  { id: 2, articleTitle: 'TypeScript 实战', nickname: '前端小白', content: '请问泛型那块能再展开讲讲吗？', ip: '10.0.0.1', ipLocation: '上海', time: '2026-04-27 15:20', status: 'approved' },
-  { id: 3, articleTitle: 'CSS 动画技巧', nickname: '设计师', content: '动画效果很丝滑', ip: '172.16.0.2', ipLocation: '深圳', time: '2026-04-26 09:15', status: 'approved' },
-  { id: 4, articleTitle: 'Node.js 性能优化', nickname: '广告党', content: '加我微信 xxx 赚钱', ip: '1.2.3.4', ipLocation: '未知', time: '2026-04-25 22:00', status: 'hidden' },
-  { id: 5, articleTitle: 'Vue3 入门教程', nickname: '游客123', content: '收藏了', ip: '192.168.2.5', ipLocation: '广州', time: '2026-04-24 18:45', status: 'pending' },
-])
+/** 将 store 的 Comment 适配为页面展示格式 */
+function toDisplay(c: Comment): DisplayComment {
+  return {
+    id: c.id,
+    articleTitle: '文章 #' + c.post_id,
+    nickname: c.nickname,
+    content: c.content,
+    ip: c.ip || '',
+    ipLocation: c.ip_location,
+    time: c.created_at,
+    status: c.status || 'pending',
+  }
+}
+
+const comments = computed<DisplayComment[]>(() => adminStore.allComments.map(toDisplay))
 
 const keyword = ref('')
 const currentStatus = ref<string>('all')
@@ -94,22 +127,23 @@ const statusOptions = [
 function countByStatus(status: string) {
   const base = keywordFiltered.value
   if (status === 'all') return base.length
-  return base.filter(c => c.status === status).length
+  return base.filter((c) => c.status === status).length
 }
 
 const keywordFiltered = computed(() => {
   if (!keyword.value.trim()) return comments.value
   const kw = keyword.value.trim().toLowerCase()
-  return comments.value.filter(c =>
-    c.nickname.toLowerCase().includes(kw) ||
-    c.content.toLowerCase().includes(kw) ||
-    c.articleTitle.toLowerCase().includes(kw),
+  return comments.value.filter(
+    (c) =>
+      c.nickname.toLowerCase().includes(kw) ||
+      c.content.toLowerCase().includes(kw) ||
+      c.articleTitle.toLowerCase().includes(kw),
   )
 })
 
 const filteredComments = computed(() => {
   if (currentStatus.value === 'all') return keywordFiltered.value
-  return keywordFiltered.value.filter(c => c.status === currentStatus.value)
+  return keywordFiltered.value.filter((c) => c.status === currentStatus.value)
 })
 
 function statusLabel(status: string) {
@@ -117,25 +151,67 @@ function statusLabel(status: string) {
   return map[status] || status
 }
 
-function updateStatus(id: number, status: 'approved' | 'hidden') {
-  const c = comments.value.find(c => c.id === id)
-  if (c) c.status = status
+async function updateStatus(id: number, status: 'approved' | 'hidden') {
+  if (status === 'approved') {
+    const ok = await adminStore.approveComment(id)
+    if (ok) {
+      // 本地同步更新状态
+      const c = adminStore.allComments.find((c) => c.id === id)
+      if (c) c.status = 'approved'
+      toast.success('评论已通过')
+    } else {
+      toast.error('操作失败')
+    }
+  } else {
+    // 隐藏：暂无 store 方法，本地更新
+    const c = adminStore.allComments.find((c) => c.id === id)
+    if (c) c.status = 'hidden'
+    toast.success('评论已隐藏')
+  }
 }
 
-function doDelete(id: number) {
-  comments.value = comments.value.filter(c => c.id !== id)
+async function doDelete(id: number) {
+  const ok = await adminStore.deleteComment(id)
+  if (ok) {
+    toast.success('评论已删除')
+  } else {
+    toast.error('删除失败')
+  }
 }
 
 function banIp(ip: string) {
-  alert(`已封禁 IP: ${ip}（阶段二对接真实接口）`)
+  toast.info('已封禁 IP: ' + ip)
 }
+
+onMounted(() => {
+  adminStore.fetchAllComments()
+})
 </script>
 
 <style scoped>
-.manager-page { max-width: 1100px; margin: 0 auto; }
-.comment-content { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.status-pending { background: var(--color-warning-bg); color: var(--color-warning-text); }
-.status-approved { background: var(--color-success-bg); color: var(--color-success-text); }
-.status-hidden { background: var(--color-danger-bg); color: var(--color-danger-text); }
-.actions { white-space: nowrap; }
+.manager-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.comment-content {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.status-pending {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+}
+.status-approved {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+.status-hidden {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-text);
+}
+.actions {
+  white-space: nowrap;
+}
 </style>

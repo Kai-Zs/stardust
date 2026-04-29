@@ -48,8 +48,7 @@ import katex from 'katex'
 import 'highlight.js/styles/github.css'
 import 'katex/dist/katex.min.css'
 
-let md: MarkdownIt
-md = new MarkdownIt({
+const md: MarkdownIt = new MarkdownIt({
   html: false,
   linkify: true,
   typographer: true,
@@ -57,10 +56,10 @@ md = new MarkdownIt({
     if (lang && hljs.getLanguage(lang)) {
       try {
         const highlighted = hljs.highlight(str, { language: lang }).value
-        return `<div class="code-block"><button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.querySelector('code').textContent).then(()=>{this.textContent='已复制';setTimeout(()=>{this.textContent='复制'},1500)})">复制</button><pre class="hljs"><code>${highlighted}</code></pre></div>`
+        return `<div class="code-block"><button class="copy-btn" data-copyable>复制</button><pre class="hljs"><code>${highlighted}</code></pre></div>`
       } catch {}
     }
-    return `<div class="code-block"><button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.querySelector('code').textContent).then(()=>{this.textContent='已复制';setTimeout(()=>{this.textContent='复制'},1500)})">复制</button><pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre></div>`
+    return `<div class="code-block"><button class="copy-btn" data-copyable>复制</button><pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre></div>`
   },
 })
 
@@ -82,7 +81,9 @@ md.render = (src: string, env?: unknown): string => {
       const idx = inlinePlaceholders.length
       inlinePlaceholders.push(html)
       return `%%MATH_INLINE_${idx}%%`
-    } catch { return `$${formula}$` }
+    } catch {
+      return `$${formula}$`
+    }
   })
   let result = originalRender(processed, env)
   // 还原行内公式占位符
@@ -96,7 +97,10 @@ md.render = (src: string, env?: unknown): string => {
       result = result.replace(`<p>%%MATH_BLOCK_${idx}%%</p>`, html)
       result = result.replace(`%%MATH_BLOCK_${idx}%%`, html)
     } catch {
-      result = result.replace(`%%MATH_BLOCK_${idx}%%`, `<pre class="katex-error">公式渲染失败: ${formula}</pre>`)
+      result = result.replace(
+        `%%MATH_BLOCK_${idx}%%`,
+        `<pre class="katex-error">公式渲染失败: ${formula}</pre>`,
+      )
     }
   })
   return result
@@ -105,8 +109,74 @@ md.render = (src: string, env?: unknown): string => {
 export function renderMarkdown(content: string): string {
   const raw = md.render(content)
   return DOMPurify.sanitize(raw, {
-    ALLOWED_TAGS: ['h1','h2','h3','h4','h5','h6','p','br','a','ul','ol','li','blockquote','pre','code','em','strong','del','ins','table','thead','tbody','tr','th','td','img','span','div','button','input','label','sup','sub','details','summary','hr','section'],
-    ALLOWED_ATTR: ['href','src','alt','title','class','id','target','rel','loading','width','height','onclick','style'],
+    ALLOWED_TAGS: [
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'p',
+      'br',
+      'a',
+      'ul',
+      'ol',
+      'li',
+      'blockquote',
+      'pre',
+      'code',
+      'em',
+      'strong',
+      'del',
+      'ins',
+      'table',
+      'thead',
+      'tbody',
+      'tr',
+      'th',
+      'td',
+      'img',
+      'span',
+      'div',
+      'button',
+      'input',
+      'label',
+      'sup',
+      'sub',
+      'details',
+      'summary',
+      'hr',
+      'section',
+    ],
+    ALLOWED_ATTR: [
+      'href',
+      'src',
+      'alt',
+      'title',
+      'class',
+      'id',
+      'target',
+      'rel',
+      'loading',
+      'width',
+      'height',
+      'data-copyable',
+      'style',
+    ],
   })
 }
 
+export function setupCopyDelegate(container: HTMLElement): void {
+  container.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-copyable]')
+    if (!btn) return
+    const code = btn.parentElement?.querySelector('code')
+    if (!code) return
+    navigator.clipboard.writeText(code.textContent ?? '').then(() => {
+      btn.textContent = '已复制'
+      setTimeout(() => {
+        btn.textContent = '复制'
+      }, 1500)
+    })
+  })
+}

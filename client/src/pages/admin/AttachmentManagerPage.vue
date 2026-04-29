@@ -5,14 +5,14 @@
       <div class="header-actions">
         <label class="admin-btn-primary upload-btn">
           上传文件
-          <input type="file" multiple @change="handleUpload" hidden />
+          <input type="file" multiple hidden @change="handleUpload" />
         </label>
       </div>
     </div>
 
     <!-- 附件网格 -->
-    <div class="attachment-grid" v-if="files.length > 0">
-      <div class="attachment-card" v-for="f in files" :key="f.id">
+    <div v-if="files.length > 0" class="attachment-grid">
+      <div v-for="f in files" :key="f.id" class="attachment-card">
         <div class="card-preview">
           <img v-if="isImage(f.name)" :src="f.url" :alt="f.name" />
           <div v-else class="file-icon">文档</div>
@@ -32,13 +32,13 @@
     </div>
     <p v-else class="admin-empty">暂无附件</p>
 
-    <!-- 复制提示 -->
-    <div v-if="copyMsg" class="toast">{{ copyMsg }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useToastStore } from '../../stores/toast'
+import { api } from '../../api'
 
 interface Attachment {
   id: number
@@ -48,14 +48,11 @@ interface Attachment {
   date: string
 }
 
-const files = ref<Attachment[]>([
-  { id: 1, name: 'cover-1.jpg', url: 'https://picsum.photos/seed/img1/300/200', size: 245760, date: '2026-04-20' },
-  { id: 2, name: 'avatar.png', url: 'https://picsum.photos/seed/avatar/200/200', size: 102400, date: '2026-04-18' },
-  { id: 3, name: 'diagram.svg', url: '', size: 51200, date: '2026-04-15' },
-  { id: 4, name: 'readme.md', url: '', size: 4096, date: '2026-04-10' },
-])
+// TODO: 后续改为从 adminStore 或专用 API 获取附件列表
+const files = ref<Attachment[]>([])
+const loading = ref(false)
 
-const copyMsg = ref('')
+const toast = useToastStore()
 
 function isImage(filename: string): boolean {
   return /\.(png|jpe?g|gif|svg|webp)$/i.test(filename)
@@ -69,47 +66,92 @@ function formatSize(bytes: number): string {
 
 async function copyUrl(url: string) {
   if (!url) {
-    copyMsg.value = '暂无 URL'
-  } else {
-    try {
-      await navigator.clipboard.writeText(url)
-      copyMsg.value = '已复制 URL'
-    } catch {
-      copyMsg.value = '复制失败'
-    }
+    toast.warning('暂无 URL')
+    return
   }
-  setTimeout(() => { copyMsg.value = '' }, 2000)
+  try {
+    await navigator.clipboard.writeText(url)
+    toast.success('已复制 URL')
+  } catch {
+    toast.error('复制失败')
+  }
 }
 
-function handleUpload(e: Event) {
+async function handleUpload(e: Event) {
   const input = e.target as HTMLInputElement
-  if (!input.files) return
-  // 阶段二对接真实上传 API
-  const newId = Math.max(0, ...files.value.map(f => f.id)) + 1
-  for (let i = 0; i < input.files.length; i++) {
-    const file = input.files[i]
-    files.value.push({
-      id: newId + i,
-      name: file.name,
-      url: URL.createObjectURL(file),
-      size: file.size,
-      date: new Date().toISOString().slice(0, 10),
-    })
+  if (!input.files || input.files.length === 0) return
+
+  loading.value = true
+  try {
+    for (let i = 0; i < input.files.length; i++) {
+      const file = input.files[i]
+      const formData = new FormData()
+      formData.append('file', file)
+      // TODO: 对接真实附件上传接口
+      const result = await api.upload<{ id: number; url: string }>('/attachments', formData)
+      files.value.push({
+        id: result.id,
+        name: file.name,
+        url: result.url,
+        size: file.size,
+        date: new Date().toISOString().slice(0, 10),
+      })
+    }
+    toast.success('上传成功')
+  } catch {
+    toast.error('上传失败，请检查网络或服务端状态')
+  } finally {
+    loading.value = false
+    input.value = ''
   }
-  input.value = ''
 }
 
-function doDelete(id: number) {
-  files.value = files.value.filter(f => f.id !== id)
+async function doDelete(id: number) {
+  try {
+    // TODO: 对接真实附件删除接口
+    await api.delete('/attachments/' + id)
+    files.value = files.value.filter((f) => f.id !== id)
+    toast.success('附件已删除')
+  } catch {
+    toast.error('删除失败')
+  }
 }
+
+// TODO: 对接真实接口获取附件列表
+async function fetchFiles() {
+  loading.value = true
+  try {
+    const data = await api.get<Attachment[]>('/attachments')
+    files.value = data
+  } catch {
+    // 接口未实现时静默失败，保持空列表
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(fetchFiles)
 </script>
 
 <style scoped>
-.manager-page { max-width: 960px; margin: 0 auto; }
-.header-actions { display: flex; gap: 0.75rem; }
-.upload-btn { display: inline-block; cursor: pointer; }
+.manager-page {
+  max-width: 960px;
+  margin: 0 auto;
+}
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+.upload-btn {
+  display: inline-block;
+  cursor: pointer;
+}
 
-.attachment-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+.attachment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
 .attachment-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -130,12 +172,18 @@ function doDelete(id: number) {
   justify-content: center;
   overflow: hidden;
 }
-.card-preview img { width: 100%; height: 100%; object-fit: cover; }
+.card-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .file-icon {
   font-size: 2rem;
   color: var(--color-text-secondary);
 }
-.card-info { padding: 0.75rem; }
+.card-info {
+  padding: 0.75rem;
+}
 .file-name {
   font-size: 0.85rem;
   font-weight: 600;
@@ -144,19 +192,15 @@ function doDelete(id: number) {
   white-space: nowrap;
   margin-bottom: 0.25rem;
 }
-.file-meta { display: flex; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: 0.5rem; }
-.card-actions { display: flex; gap: 0.3rem; }
-
-.toast {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--color-text);
-  color: var(--color-bg);
-  padding: 0.5rem 1.25rem;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  z-index: 200;
+.file-meta {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+.card-actions {
+  display: flex;
+  gap: 0.3rem;
 }
 </style>
