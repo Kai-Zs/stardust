@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { createHead } from '@unhead/vue'
+import { createUnhead } from '@unhead/vue'
 import App from './App.vue'
 import router from './router'
 import './style.css'
@@ -9,7 +9,7 @@ import './assets/admin.css'
 const app = createApp(App)
 app.use(createPinia())
 app.use(router)
-app.use(createHead())
+app.use(createUnhead())
 // 全局错误处理
 app.config.errorHandler = (err, _instance, info) => {
   console.error('[全局错误]', err, info)
