@@ -22,7 +22,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   if (!res.ok) {
     if (res.status === 401) {
       localStorage.removeItem('token')
-      window.location.hash = '#/admin/login'
+      window.location.href = '/admin/login'
     }
     const body = await res.json().catch(() => ({}))
     throw new ApiError(res.status, body.error || `请求失败 (${res.status})`)

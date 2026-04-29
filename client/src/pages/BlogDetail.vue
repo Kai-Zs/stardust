@@ -98,7 +98,6 @@ const commentTree = computed(() => buildCommentTree(mockComments))
 
 function handleCommentSubmit(data: { nickname: string; content: string }) {
   // 阶段二接入真实 API
-  console.log('新评论:', data)
   alert(`评论已提交（Mock）\n昵称：${data.nickname}\n内容：${data.content}`)
 }
 </script>

@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import PlayerControls from '../components/PlayerControls.vue'
 import Playlist from '../components/Playlist.vue'
 import { mockPlaylist } from '../mock/data'
@@ -116,6 +116,10 @@ function stopProgress() {
     progressTimer = null
   }
 }
+
+onBeforeUnmount(() => {
+  stopProgress()
+})
 </script>
 
 <style scoped>

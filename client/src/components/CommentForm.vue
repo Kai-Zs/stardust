@@ -51,6 +51,6 @@ async function handleSubmit() {
 .comment-form { padding: 1rem 0; }
 .form-row { margin-bottom: 0.75rem; }
 .form-input, .form-textarea { width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); font-size: 0.9rem; resize: vertical; }
-.submit-btn { padding: 0.5rem 1.5rem; border: none; border-radius: var(--radius); background: var(--color-accent); color: #fff; cursor: pointer; font-family: var(--font-sans); font-size: 0.9rem; }
+.submit-btn { padding: 0.5rem 1.5rem; border: none; border-radius: var(--radius); background: var(--color-accent); color: var(--color-on-accent); cursor: pointer; font-family: var(--font-sans); font-size: 0.9rem; }
 .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>

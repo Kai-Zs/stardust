@@ -29,7 +29,7 @@
     <div class="action-card">
       <h3>手动备份</h3>
       <p class="desc">点击下方按钮下载当前数据库的完整备份文件（JSON 格式）。</p>
-      <button class="btn-primary" @click="downloadBackup">下载备份</button>
+      <button class="admin-btn-primary" @click="downloadBackup">下载备份</button>
     </div>
 
     <!-- 上传恢复 -->
@@ -37,7 +37,7 @@
       <h3>数据恢复</h3>
       <p class="desc">上传之前下载的备份文件以恢复数据。此操作将覆盖当前所有数据，请谨慎操作。</p>
       <div class="restore-area">
-        <label class="btn-secondary restore-btn">
+        <label class="admin-btn-secondary restore-btn">
           选择备份文件
           <input type="file" accept=".json" @change="handleRestore" hidden />
         </label>
@@ -51,12 +51,12 @@
     </div>
 
     <!-- 恢复确认弹窗 -->
-    <div class="modal-overlay" v-if="showRestoreModal" @click.self="showRestoreModal = false">
-      <div class="modal">
+    <div class="admin-modal-overlay" v-if="showRestoreModal" @click.self="showRestoreModal = false">
+      <div class="admin-modal backup-modal">
         <h3>确认恢复数据</h3>
         <p>此操作将<strong>永久覆盖</strong>当前所有数据，建议先下载一份当前备份。确定要继续吗？</p>
-        <div class="modal-actions">
-          <button class="btn-secondary" @click="showRestoreModal = false">取消</button>
+        <div class="admin-modal-actions">
+          <button class="admin-btn-secondary" @click="showRestoreModal = false">取消</button>
           <button class="btn-danger" @click="doRestore">确认恢复</button>
         </div>
       </div>
@@ -124,33 +124,10 @@ function doRestore() {
 
 .desc { color: var(--color-text-secondary); font-size: 0.9rem; margin-bottom: 1rem; }
 
-.btn-primary {
-  padding: 0.5rem 1.5rem;
-  background: var(--color-accent);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 0.95rem;
-  transition: filter var(--transition-fast);
-}
-.btn-primary:hover { filter: brightness(0.9); }
-
-.btn-secondary {
-  padding: 0.5rem 1.25rem;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  cursor: pointer;
-  color: var(--color-text);
-  font-size: 0.9rem;
-  display: inline-block;
-}
-
 .btn-danger {
   padding: 0.5rem 1.5rem;
   background: var(--color-danger);
-  color: #fff;
+  color: var(--color-on-accent);
   border: none;
   border-radius: var(--radius);
   cursor: pointer;
@@ -163,13 +140,10 @@ function doRestore() {
 .restore-btn { cursor: pointer; }
 .selected-file { font-size: 0.9rem; color: var(--color-accent); }
 
-/* Modal */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
-.modal { background: var(--color-surface); border-radius: var(--radius); padding: 2rem; max-width: 440px; width: 90%; border: 1px solid var(--color-border); }
-.modal h3 { margin-bottom: 0.5rem; }
-.modal p { color: var(--color-text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.6; }
-.modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
-.modal-actions .btn-danger { padding: 0.5rem 1.25rem; border-radius: var(--radius); }
+.backup-modal { max-width: 440px; }
+.backup-modal h3 { margin-bottom: 0.5rem; }
+.backup-modal p { color: var(--color-text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.6; }
+.admin-modal-actions .btn-danger { padding: 0.5rem 1.25rem; border-radius: var(--radius); }
 
 @media (max-width: 480px) {
   .status-grid { grid-template-columns: 1fr; }

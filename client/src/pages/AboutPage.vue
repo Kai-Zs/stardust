@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useSiteStore } from '../stores/site'
 import MarkdownRenderer from '../components/MarkdownRenderer.vue'
 import { mockSiteConfig } from '../mock/data'
@@ -20,7 +20,7 @@ onMounted(() => {
   siteStore.setConfig(mockSiteConfig)
 })
 
-const aboutMe = ref(siteStore.get('about_me') || '暂无介绍')
+const aboutMe = computed(() => siteStore.get('about_me') || '暂无介绍')
 </script>
 
 <style scoped>

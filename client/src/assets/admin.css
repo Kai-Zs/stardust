@@ -66,6 +66,7 @@
   gap: 0.4rem;
   flex-wrap: wrap;
   align-items: center;
+  margin-bottom: 1rem;
   animation: adminSlideIn 0.4s ease both;
   animation-delay: 0.1s;
 }
@@ -85,7 +86,7 @@
 }
 .admin-filter-btn.active {
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   border-color: var(--color-accent);
 }
 .admin-filter-btn.clear {
@@ -142,7 +143,7 @@
 .admin-btn-primary {
   padding: 0.5rem 1.25rem;
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   border: none;
   border-radius: var(--radius);
   cursor: pointer;
@@ -182,7 +183,7 @@
 }
 .admin-btn-danger:hover {
   background: var(--color-danger);
-  color: #fff;
+  color: var(--color-on-accent);
 }
 
 .admin-btn-approve {
@@ -191,7 +192,7 @@
 }
 .admin-btn-approve:hover {
   background: var(--color-success);
-  color: #fff;
+  color: var(--color-on-accent);
 }
 
 .admin-btn-warn {
@@ -200,14 +201,14 @@
 }
 .admin-btn-warn:hover {
   background: var(--color-warning);
-  color: #fff;
+  color: var(--color-on-accent);
 }
 
 /* 弹窗 */
 .admin-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--shadow-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -236,6 +237,9 @@
 }
 .admin-field input[type="text"],
 .admin-field input[type="url"],
+.admin-field input[type="email"],
+.admin-field input[type="date"],
+.admin-field input[type="number"],
 .admin-field textarea,
 .admin-field select {
   width: 100%;

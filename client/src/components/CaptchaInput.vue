@@ -7,7 +7,7 @@
       maxlength="6"
       class="captcha-field"
     />
-    <span class="captcha-hint">阶段三完善</span>
+    <!-- TODO: 阶段三完善验证码功能 -->
   </div>
 </template>
 

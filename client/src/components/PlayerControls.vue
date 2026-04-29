@@ -132,7 +132,7 @@ function handleProgressClick(e: MouseEvent) {
     0 0 12px rgba(193, 120, 23, 0.2);
   transition: background-color 0.4s ease, box-shadow 0.4s ease;
 }
-.vinyl-note { color: #fff; font-size: 1.1rem; line-height: 1; }
+.vinyl-note { color: var(--color-on-accent); font-size: 1.1rem; line-height: 1; }
 
 /* 空状态 */
 .empty-cover {
@@ -189,7 +189,7 @@ function handleProgressClick(e: MouseEvent) {
 .ctrl-play {
   width: 54px; height: 54px;
   background: color-mix(in srgb, var(--color-accent) 75%, var(--color-surface));
-  color: #fff; border: none;
+  color: var(--color-on-accent); border: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
 }

@@ -1,40 +1,40 @@
 <template>
   <div class="editor-page">
-    <div class="page-header">
+    <div class="admin-page-header">
       <h1>{{ isEdit ? '编辑文章' : '撰写新文章' }}</h1>
       <div class="header-actions">
-        <button class="btn-secondary" @click="saveDraft">存草稿</button>
-        <button class="btn-primary" @click="publish">发布</button>
+        <button class="admin-btn-secondary" @click="saveDraft">存草稿</button>
+        <button class="admin-btn-primary" @click="publish">发布</button>
       </div>
     </div>
 
     <!-- 文章元信息 -->
     <div class="meta-form">
-      <div class="field">
+      <div class="admin-field">
         <label>标题</label>
         <input v-model="form.title" type="text" placeholder="文章标题" />
       </div>
       <div class="field-row">
-        <div class="field flex-1">
+        <div class="admin-field flex-1">
           <label>Slug</label>
           <input v-model="form.slug" type="text" placeholder="article-slug" />
         </div>
-        <div class="field flex-1">
+        <div class="admin-field flex-1">
           <label>摘要</label>
           <input v-model="form.summary" type="text" placeholder="简短摘要" />
         </div>
       </div>
       <div class="field-row">
-        <div class="field flex-1">
+        <div class="admin-field flex-1">
           <label>标签（逗号分隔）</label>
           <input v-model="form.tagsInput" type="text" placeholder="Vue, TypeScript" />
         </div>
-        <div class="field flex-1">
+        <div class="admin-field flex-1">
           <label>封面图 URL</label>
           <input v-model="form.coverUrl" type="text" placeholder="https://..." />
         </div>
       </div>
-      <div class="field-inline">
+      <div class="admin-field-inline">
         <label>
           <input type="checkbox" v-model="form.allowComment" />
           允许评论
@@ -171,32 +171,7 @@ function publish() {
 
 <style scoped>
 .editor-page { max-width: 1200px; margin: 0 auto; }
-
-.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
-.page-header h1 { margin: 0; font-size: 1.5rem; }
 .header-actions { display: flex; gap: 0.75rem; }
-
-.btn-primary {
-  padding: 0.5rem 1.5rem;
-  background: var(--color-accent);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 0.95rem;
-  transition: filter var(--transition-fast);
-}
-.btn-primary:hover { filter: brightness(0.9); }
-.btn-secondary {
-  padding: 0.5rem 1.5rem;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  cursor: pointer;
-  color: var(--color-text);
-  font-size: 0.95rem;
-}
-.btn-secondary:hover { background: var(--color-border); }
 
 .meta-form {
   background: var(--color-surface);
@@ -205,23 +180,10 @@ function publish() {
   padding: 1.25rem;
   margin-bottom: 1rem;
 }
-.field { margin-bottom: 1rem; }
-.field:last-child { margin-bottom: 0; }
-.field label { display: block; margin-bottom: 0.3rem; font-size: 0.85rem; color: var(--color-text-secondary); }
-.field input[type="text"] {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  font-size: 0.95rem;
-  background: var(--color-bg);
-  color: var(--color-text);
-}
+
 .field-row { display: flex; gap: 1rem; margin-bottom: 1rem; }
 .field-row:last-of-type { margin-bottom: 1rem; }
 .flex-1 { flex: 1; }
-.field-inline { margin-bottom: 0; }
-.field-inline label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; font-size: 0.9rem; }
 
 .editor-area { display: flex; gap: 1rem; height: 55vh; }
 .pane { flex: 1; display: flex; flex-direction: column; border: 1px solid var(--color-border); border-radius: var(--radius); overflow: hidden; background: var(--color-surface); }

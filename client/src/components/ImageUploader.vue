@@ -62,6 +62,6 @@ function handleUpload() {
 .upload-placeholder { text-align: center; color: var(--color-text-secondary); }
 .upload-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
 .preview { max-width: 100%; max-height: 300px; object-fit: contain; }
-.upload-btn { padding: 0.5rem 1.5rem; border: none; border-radius: var(--radius); background: var(--color-accent); color: #fff; cursor: pointer; font-family: var(--font-sans); align-self: flex-start; }
+.upload-btn { padding: 0.5rem 1.5rem; border: none; border-radius: var(--radius); background: var(--color-accent); color: var(--color-on-accent); cursor: pointer; font-family: var(--font-sans); align-self: flex-start; }
 .upload-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>

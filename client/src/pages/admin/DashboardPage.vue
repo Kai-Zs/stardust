@@ -120,7 +120,6 @@ const recentComments = ref([
   transform: translateY(-4px);
   box-shadow: var(--shadow-hover);
 }
-@keyframes adminSlideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 .stat-icon { font-size: 1.4rem; margin-bottom: 0.4rem; }
 .stat-number { font-size: 2rem; font-weight: 700; color: var(--color-accent); font-family: var(--font-serif); }
 .stat-label { font-size: 0.9rem; color: var(--color-text-secondary); margin-top: 0.3rem; }

@@ -1,9 +1,9 @@
 <template>
   <div class="manager-page">
-    <div class="page-header">
+    <div class="admin-page-header">
       <h1>附件管理</h1>
       <div class="header-actions">
-        <label class="btn-primary upload-btn">
+        <label class="admin-btn-primary upload-btn">
           上传文件
           <input type="file" multiple @change="handleUpload" hidden />
         </label>
@@ -24,13 +24,13 @@
             <span>{{ f.date }}</span>
           </div>
           <div class="card-actions">
-            <button class="btn-sm" @click="copyUrl(f.url)">复制 URL</button>
-            <button class="btn-sm btn-danger" @click="doDelete(f.id)">删除</button>
+            <button class="admin-btn-sm" @click="copyUrl(f.url)">复制 URL</button>
+            <button class="admin-btn-sm admin-btn-danger" @click="doDelete(f.id)">删除</button>
           </div>
         </div>
       </div>
     </div>
-    <p v-else class="empty">暂无附件</p>
+    <p v-else class="admin-empty">暂无附件</p>
 
     <!-- 复制提示 -->
     <div v-if="copyMsg" class="toast">{{ copyMsg }}</div>
@@ -106,21 +106,7 @@ function doDelete(id: number) {
 
 <style scoped>
 .manager-page { max-width: 960px; margin: 0 auto; }
-
-.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
-.page-header h1 { margin: 0; }
-
-.btn-primary {
-  padding: 0.5rem 1.25rem;
-  background: var(--color-accent);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 0.95rem;
-  transition: filter var(--transition-fast);
-}
-.btn-primary:hover { filter: brightness(0.9); }
+.header-actions { display: flex; gap: 0.75rem; }
 .upload-btn { display: inline-block; cursor: pointer; }
 
 .attachment-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
@@ -154,20 +140,6 @@ function doDelete(id: number) {
 }
 .file-meta { display: flex; gap: 0.5rem; font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: 0.5rem; }
 .card-actions { display: flex; gap: 0.3rem; }
-.btn-sm {
-  padding: 0.2rem 0.5rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  background: transparent;
-  cursor: pointer;
-  font-size: 0.75rem;
-  color: var(--color-text);
-}
-.btn-sm:hover { background: var(--color-bg); }
-.btn-danger { color: var(--color-danger); border-color: var(--color-danger); }
-.btn-danger:hover { background: var(--color-danger); color: #fff; }
-
-.empty { color: var(--color-text-secondary); text-align: center; padding: 2rem; }
 
 .toast {
   position: fixed;

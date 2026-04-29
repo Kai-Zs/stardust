@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 
 const routes = [
   {
@@ -42,6 +43,13 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior() { return { top: 0 } },
+})
+
+router.beforeEach((to) => {
+  const auth = useAuthStore()
+  if (to.path.startsWith('/admin') && to.name !== 'login' && !auth.isLoggedIn) {
+    return { name: 'login' }
+  }
 })
 
 export default router

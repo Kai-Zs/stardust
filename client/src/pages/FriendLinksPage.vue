@@ -16,7 +16,7 @@
         <span class="link-desc">{{ link.description }}</span>
       </a>
     </div>
-    <EmptyState v-if="!links.length" message="暂无友链" />
+    <EmptyState v-if="!links.length">暂无友链</EmptyState>
   </div>
 </template>
 
